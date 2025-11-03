@@ -471,13 +471,23 @@
             transform: translateY(-2px);
         }
 
-        /* Assignments */
-        .assignment-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 15px;
+        .submit-homework-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .submit-homework-title {
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn {
@@ -490,6 +500,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
+            justify-content: center;
         }
 
         .btn-primary {
@@ -509,6 +521,18 @@
 
         .btn-success:hover {
             background: #059669;
+        }
+
+        .btn-warning {
+            background: white;
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .btn-warning:hover {
+            background: #fffbeb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-danger {
@@ -1100,6 +1124,8 @@
     <script>
         // Password and Action Management
         const ADMIN_PASSWORD = "5686";
+        const HOMEWORK_SUBMISSION_URL = "https://script.google.com/macros/s/AKfycbwtLFH2uFVLhYitpKVa1qgvIMdfooXbvGhfJ9wY84DWiMmFob5mObenTLdLGhOOTL7O/exec";
+        
         let pendingAction = null;
         let pendingCourseId = null;
 
@@ -1275,12 +1301,21 @@
                         
                         <div class="module">
                             <div class="module-header">
-                                <div class="module-title">✅ Módulo Principal</div>
-                                <span class="status-badge status-completed">Completado</span>
+                                <div class="module-title">📚 Recursos del Curso</div>
+                                <span class="status-badge status-completed">Activo</span>
                             </div>
                             <div class="module-resources">
                                 ${resourcesHTML}
                             </div>
+                        </div>
+
+                        <div class="submit-homework-section">
+                            <div class="submit-homework-title">
+                                📤 Entrega de Tareas
+                            </div>
+                            <a href="${HOMEWORK_SUBMISSION_URL}" class="btn btn-warning" target="_blank">
+                                Entregar Tarea del Curso
+                            </a>
                         </div>
 
                         <button class="btn btn-primary" style="margin-top: 15px; width: 100%; justify-content: center;">
