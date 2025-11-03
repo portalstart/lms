@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBoard - Elvis Santizo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: normal;
+            display: block;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .role-switch {
+            background: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .role-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .role-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Gamification Panel */
+        .gamification-panel {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius);
+            color: white;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        /* Badges */
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
+
+        .badge.unlocked {
+            background: gold;
+            border-color: #fbbf24;
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            background: var(--white);
+            padding: 15px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .tab-btn:hover {
+            background: var(--light);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Search and Filter */
+        .search-bar {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Course Cards */
+        .courses-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: none;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .teacher-mode .course-actions {
+            display: flex;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn.edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .course-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .course-header.grade-10 {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .course-header.automation {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .course-header.innovation {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .course-header.creativity {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
+
+        .course-header.app-inventor {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .course-header.programming {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .course-header.animation {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+
+        .course-header.security {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+
+        .course-header.computational {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+        }
+
+        .course-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.95;
+            flex-wrap: wrap;
+        }
+
+        .course-body {
+            padding: 20px;
+        }
+
+        .course-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .module {
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .module:hover {
+            background: #e5e7eb;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .module-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .status-locked {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .module-resources {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .resource-link {
+            padding: 8px 15px;
+            background: white;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .resource-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .webex-link {
+            background: linear-gradient(135deg, #00BCEB, #0099CC);
+            color: white;
+            font-weight: 600;
+        }
+
+        .webex-link:hover {
+            background: linear-gradient(135deg, #0099CC, #007799);
+            transform: translateY(-2px);
+        }
+
+        /* Assignments */
+        .assignment-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .password-error {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .resource-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .resource-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .remove-resource {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-resource-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .gamification-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .gamification-panel {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8); }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .course-count {
+            background: var(--white);
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .comment {
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .comment-date {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .rank {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 30px;
+        }
+
+        .rank-1 { color: gold; }
+        .rank-2 { color: silver; }
+        .rank-3 { color: #cd7f32; }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .leaderboard-points {
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                🎓 EduBoard
+                <span class="logo-subtitle">by Elvis Santizo</span>
+            </div>
+            <div class="user-info">
+                <div class="role-switch">
+                    <button class="role-btn active" onclick="switchRole('student')">👨‍🎓 Estudiante</button>
+                    <button class="role-btn" onclick="switchRole('teacher')">👨‍🏫 Profesor</button>
+                </div>
+                <div>
+                    <strong id="userName">Estudiante</strong>
+                </div>
+            </div>
+        </header>
+
+        <!-- Gamification Panel -->
+        <div class="gamification-panel fade-in">
+            <div class="stat-card">
+                <h3 id="totalPoints">850</h3>
+                <p>Puntos Totales</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669)">
+                <h3 id="completedCourses">3/10</h3>
+                <p>Cursos Completados</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 30%"></div>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
+                <h3 id="currentLevel">Nivel 5</h3>
+                <p>Rango Actual</p>
+                <div class="badges">
+                    <div class="badge unlocked">🏆</div>
+                    <div class="badge unlocked">⭐</div>
+                    <div class="badge">🎯</div>
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #ec4899, #db2777)">
+                <h3 id="avgGrade">88%</h3>
+                <p>Promedio General</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 88%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('courses')">📚 Mis Cursos</button>
+                    <button class="tab-btn" onclick="switchTab('assignments')">📝 Tareas</button>
+                    <button class="tab-btn" onclick="switchTab('grades')">📊 Calificaciones</button>
+                    <button class="tab-btn teacher-only" style="display: none;" onclick="switchTab('students')">👥 Estudiantes</button>
+                </div>
+
+                <!-- Courses Tab -->
+                <div id="coursesTab" class="tab-content">
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()">
+                        <select class="filter-select" id="filterSelect" onchange="filterCourses()">
+                            <option value="all">Todos los cursos</option>
+                            <option value="programming">Programación</option>
+                            <option value="apps">Creación de Apps</option>
+                            <option value="creativity">Creatividad</option>
+                            <option value="automation">Automatización</option>
+                            <option value="academic">Académico</option>
+                        </select>
+                    </div>
+
+                    <div class="course-count">
+                        <span>📚 <strong id="courseCount">10</strong> cursos disponibles</span>
+                        <button class="btn btn-primary teacher-only" style="display: none; padding: 8px 16px;" onclick="openModal('courseModal')">
+                            ➕ Nuevo Curso
+                        </button>
+                    </div>
+
+                    <div class="courses-grid" id="coursesGrid">
+                        <!-- Los cursos se cargarán dinámicamente -->
+                    </div>
+
+                    <div id="noResults" class="no-results" style="display: none;">
+                        <h3>🔍 No se encontraron cursos</h3>
+                        <p>Intenta con otros términos de búsqueda</p>
+                    </div>
+                </div>
+
+                <!-- Assignments Tab -->
+                <div id="assignmentsTab" class="tab-content" style="display: none;">
+                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de tareas</p>
+                </div>
+
+                <!-- Grades Tab -->
+                <div id="gradesTab" class="tab-content" style="display: none;">
+                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de calificaciones</p>
+                </div>
+
+                <!-- Students Tab -->
+                <div id="studentsTab" class="tab-content" style="display: none;">
+                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de estudiantes</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Leaderboard -->
+                <div class="sidebar-card fade-in">
+                    <h3 class="sidebar-title">🏆 Tabla de Líderes</h3>
+                    <div class="leaderboard-item">
+                        <div class="rank rank-1">#1</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">Laura García</div>
+                            <div class="leaderboard-points">1,320 puntos • Nivel 8</div>
+                        </div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="rank rank-2">#2</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">Ana Rodríguez</div>
+                            <div class="leaderboard-points">1,150 puntos • Nivel 7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="sidebar-card fade-in">
+                    <h3 class="sidebar-title">💬 Comentarios Recientes</h3>
+                    
+                    <div class="comment">
+                        <div class="comment-header">
+                            <span class="comment-author">Elvis Santizo</span>
+                            <span class="comment-date">Hace 1h</span>
+                        </div>
+                        <div class="comment-text">
+                            Excelente progreso! Sigan así 🚀
+                        </div>
+                    </div>
+
+                    <textarea class="comment-input" placeholder="Escribe un comentario..." id="commentInput"></textarea>
+                    <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="addComment()">
+                        Enviar Comentario
+                    </button>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="sidebar-card fade-in" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                    <h3 style="color: white; margin-bottom: 15px;">⚡ Estadísticas Rápidas</h3>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Tareas Pendientes:</span>
+                        <strong>2</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Racha Actual:</span>
+                        <strong>8 días 🔥</strong>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Modal for Password Verification -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔒 Verificación de Seguridad</h2>
+                <button class="close-modal" onclick="closeModal('passwordModal')">&times;</button>
+            </div>
+            <p style="margin-bottom: 20px; color: #6b7280;">Por seguridad, ingresa la contraseña de profesor para continuar.</p>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-input" id="passwordInput" placeholder="Ingresa la contraseña">
+                <p class="password-error" id="passwordError">❌ Contraseña incorrecta</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="closeModal('passwordModal')">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="verifyPassword()">
+                    Verificar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Course Edit -->
+    <div id="editCourseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">✏️ Editar Curso</h2>
+                <button class="close-modal" onclick="closeModal('editCourseModal')">&times;</button>
+            </div>
+            <form onsubmit="updateCourse(event)">
+                <input type="hidden" id="editCourseId">
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre del Curso (incluye emoji)</label>
+                    <input type="text" class="form-input" id="editCourseName" required placeholder="📚 Nombre del Curso">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select class="form-input" id="editCourseCategory" required>
+                        <option value="programming">Programación</option>
+                        <option value="apps">Creación de Apps</option>
+                        <option value="creativity">Creatividad</option>
+                        <option value="automation">Automatización</option>
+                        <option value="academic">Académico</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Color del Curso</label>
+                    <select class="form-input" id="editCourseColor" required>
+                        <option value="grade-10">Rojo</option>
+                        <option value="automation">Morado</option>
+                        <option value="innovation">Naranja</option>
+                        <option value="creativity">Rosa</option>
+                        <option value="app-inventor">Verde</option>
+                        <option value="programming">Azul</option>
+                        <option value="animation">Cyan</option>
+                        <option value="security">Índigo</option>
+                        <option value="computational">Turquesa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Duración (semanas)</label>
+                    <input type="number" class="form-input" id="editCourseDuration" required min="1">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-input" id="editCourseDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📎 Recursos del Curso</label>
+                    <div id="resourcesContainer"></div>
+                    <button type="button" class="add-resource-btn" onclick="addResourceField()">
+                        ➕ Agregar Recurso
+                    </button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="closeModal('editCourseModal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Password and Action Management
+        const ADMIN_PASSWORD = "5686";
+        let pendingAction = null;
+        let pendingCourseId = null;
+
+        // Courses data structure
+        let coursesData = {
+            1: {
+                name: "📚 Normas APA - 10° Grado",
+                category: "academic",
+                color: "grade-10",
+                duration: 6,
+                description: "Aprende a citar y referenciar correctamente siguiendo las normas APA 7ª edición para tus trabajos académicos.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Guía APA", url: "https://drive.google.com/file/d/ejemplo-apa-1", icon: "📄" },
+                    { name: "Plantillas", url: "https://drive.google.com/file/d/ejemplo-apa-2", icon: "📝" }
+                ]
+            },
+            2: {
+                name: "🤖 Automatización Inteligente con n8n",
+                category: "automation",
+                color: "automation",
+                duration: 8,
+                description: "Domina la automatización de procesos con n8n. Crea workflows inteligentes sin necesidad de programar.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Instalación", url: "https://drive.google.com/file/d/n8n-1", icon: "📄" },
+                    { name: "Plantillas", url: "https://drive.google.com/file/d/n8n-3", icon: "💻" }
+                ]
+            },
+            3: {
+                name: "💡 Innovación y Desarrollo de Ideas Digitales",
+                category: "creativity",
+                color: "innovation",
+                duration: 10,
+                description: "Desarrolla tu capacidad de innovación y aprende a transformar ideas en proyectos digitales exitosos.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Metodología", url: "https://drive.google.com/file/d/innov-1", icon: "📄" },
+                    { name: "Canvas", url: "https://drive.google.com/file/d/innov-2", icon: "🎨" }
+                ]
+            },
+            4: {
+                name: "🎨 Creatividad y Lógica Digital",
+                category: "creativity",
+                color: "creativity",
+                duration: 7,
+                description: "Combina pensamiento creativo con lógica computacional para resolver problemas de manera innovadora.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Técnicas", url: "https://drive.google.com/file/d/creative-1", icon: "📄" },
+                    { name: "Ejercicios", url: "https://drive.google.com/file/d/creative-2", icon: "🎮" }
+                ]
+            },
+            5: {
+                name: "📱 Creación de Apps con App Inventor",
+                category: "apps",
+                color: "app-inventor",
+                duration: 12,
+                description: "Crea tus propias aplicaciones móviles para Android sin necesidad de escribir código.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Guía Inicial", url: "https://drive.google.com/file/d/appinv-1", icon: "📄" },
+                    { name: "Ejemplos", url: "https://drive.google.com/file/d/appinv-2", icon: "💻" }
+                ]
+            },
+            6: {
+                name: "🚀 Creación de Apps y Proyectos Digitales",
+                category: "apps",
+                color: "programming",
+                duration: 14,
+                description: "Desarrolla proyectos digitales completos, desde la idea hasta la publicación de tu app.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Metodología", url: "https://drive.google.com/file/d/proj-1", icon: "📄" },
+                    { name: "Wireframes", url: "https://drive.google.com/file/d/proj-2", icon: "🎨" }
+                ]
+            },
+            7: {
+                name: "💻 Programación Creativa y Diseño Digital",
+                category: "programming",
+                color: "programming",
+                duration: 10,
+                description: "Aprende a programar mientras creas arte digital y proyectos visuales interactivos.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Introducción", url: "https://drive.google.com/file/d/prog-1", icon: "📄" },
+                    { name: "Código Base", url: "https://drive.google.com/file/d/prog-2", icon: "💻" }
+                ]
+            },
+            8: {
+                name: "🎬 Animación y Programación Básica",
+                category: "creativity",
+                color: "animation",
+                duration: 8,
+                description: "Combina animación digital con programación básica usando Scratch y herramientas visuales.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Guía Scratch", url: "https://drive.google.com/file/d/anim-1", icon: "📄" },
+                    { name: "Proyectos", url: "https://drive.google.com/file/d/anim-2", icon: "🎮" }
+                ]
+            },
+            9: {
+                name: "🔐 Introducción a Programación y Seguridad Digital",
+                category: "programming",
+                color: "security",
+                duration: 9,
+                description: "Aprende los fundamentos de programación mientras descubres cómo protegerte en el mundo digital.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Conceptos", url: "https://drive.google.com/file/d/sec-1", icon: "📄" },
+                    { name: "Ejercicios", url: "https://drive.google.com/file/d/sec-2", icon: "💻" }
+                ]
+            },
+            10: {
+                name: "🧠 Pensamiento Computacional Inicial",
+                category: "programming",
+                color: "computational",
+                duration: 6,
+                description: "Desarrolla habilidades de pensamiento lógico y resolución de problemas desde cero.",
+                resources: [
+                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                    { name: "Algoritmos", url: "https://drive.google.com/file/d/comp-1", icon: "📄" },
+                    { name: "Juegos Lógicos", url: "https://drive.google.com/file/d/comp-2", icon: "🎮" }
+                ]
+            }
+        };
+
+        let resourceCounter = 0;
+
+        // Initialize courses on page load
+        window.onload = function() {
+            renderAllCourses();
+        };
+
+        // Render all courses
+        function renderAllCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            coursesGrid.innerHTML = '';
+
+            Object.keys(coursesData).forEach(courseId => {
+                const course = coursesData[courseId];
+                coursesGrid.innerHTML += createCourseCard(courseId, course);
+            });
+
+            filterCourses();
+        }
+
+        // Create course card HTML
+        function createCourseCard(courseId, course) {
+            const resourcesHTML = course.resources.map(resource => {
+                const linkClass = resource.isWebex ? 'resource-link webex-link' : 'resource-link';
+                return `<a href="${resource.url}" class="${linkClass}" target="_blank">
+                    ${resource.icon} ${resource.name}
+                </a>`;
+            }).join('');
+
+            return `
+                <div class="course-card fade-in" data-category="${course.category}" data-course-id="${courseId}">
+                    <div class="course-actions">
+                        <button class="action-btn edit" onclick="editCourse(${courseId})" title="Editar curso">✏️</button>
+                        <button class="action-btn delete" onclick="requestDeleteCourse(${courseId})" title="Eliminar curso">🗑️</button>
+                    </div>
+                    <div class="course-header ${course.color}">
+                        <h2 class="course-title">${course.name}</h2>
+                        <div class="course-meta">
+                            <span>📅 ${course.duration} semanas</span>
+                            <span>👤 Elvis Santizo</span>
+                            <span>🎯 45% Completado</span>
+                        </div>
+                    </div>
+                    <div class="course-body">
+                        <p class="course-description">${course.description}</p>
+                        
+                        <div class="module">
+                            <div class="module-header">
+                                <div class="module-title">✅ Módulo Principal</div>
+                                <span class="status-badge status-completed">Completado</span>
+                            </div>
+                            <div class="module-resources">
+                                ${resourcesHTML}
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="margin-top: 15px; width: 100%; justify-content: center;">
+                            Continuar Aprendiendo →
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Role Switching
+        function switchRole(role) {
+            const buttons = document.querySelectorAll('.role-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const teacherElements = document.querySelectorAll('.teacher-only');
+            const coursesGrid = document.getElementById('coursesGrid');
+            
+            if (role === 'teacher') {
+                teacherElements.forEach(el => el.style.display = 'block');
+                coursesGrid.classList.add('teacher-mode');
+                document.getElementById('userName').textContent = 'Elvis Santizo';
+            } else {
+                teacherElements.forEach(el => el.style.display = 'none');
+                coursesGrid.classList.remove('teacher-mode');
+                document.getElementById('userName').textContent = 'Estudiante';
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.style.display = 'none');
+
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+        }
+
+        // Filter Courses
+        function filterCourses() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filterSelect = document.getElementById('filterSelect').value;
+            const courses = document.querySelectorAll('.course-card');
+            let visibleCount = 0;
+
+            courses.forEach(course => {
+                const title = course.querySelector('.course-title').textContent.toLowerCase();
+                const description = course.querySelector('.course-description').textContent.toLowerCase();
+                const category = course.getAttribute('data-category');
+
+                const matchesSearch = title.includes(searchInput) || description.includes(searchInput);
+                const matchesFilter = filterSelect === 'all' || category === filterSelect;
+
+                if (matchesSearch && matchesFilter) {
+                    course.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    course.style.display = 'none';
+                }
+            });
+
+            document.getElementById('courseCount').textContent = visibleCount;
+            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        // Request Delete Course
+        function requestDeleteCourse(courseId) {
+            pendingAction = 'delete';
+            pendingCourseId = courseId;
+            openModal('passwordModal');
+        }
+
+        // Edit Course
+        function editCourse(courseId) {
+            pendingAction = 'edit';
+            pendingCourseId = courseId;
+            openModal('passwordModal');
+        }
+
+        // Verify Password
+        function verifyPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('passwordError');
+
+            if (password === ADMIN_PASSWORD) {
+                closeModal('passwordModal');
+                document.getElementById('passwordInput').value = '';
+                errorElement.style.display = 'none';
+
+                if (pendingAction === 'delete') {
+                    deleteCourse(pendingCourseId);
+                } else if (pendingAction === 'edit') {
+                    showEditCourseModal(pendingCourseId);
+                }
+            } else {
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // Show Edit Course Modal
+        function showEditCourseModal(courseId) {
+            const courseData = coursesData[courseId];
+            
+            document.getElementById('editCourseId').value = courseId;
+            document.getElementById('editCourseName').value = courseData.name;
+            document.getElementById('editCourseCategory').value = courseData.category;
+            document.getElementById('editCourseColor').value = courseData.color;
+            document.getElementById('editCourseDuration').value = courseData.duration;
+            document.getElementById('editCourseDescription').value = courseData.description;
+
+            // Load resources
+            const resourcesContainer = document.getElementById('resourcesContainer');
+            resourcesContainer.innerHTML = '';
+            resourceCounter = 0;
+
+            courseData.resources.forEach((resource, index) => {
+                addResourceField(resource.name, resource.url, resource.icon, resource.isWebex);
+            });
+
+            openModal('editCourseModal');
+        }
+
+        // Add Resource Field
+        function addResourceField(name = '', url = '', icon = '📄', isWebex = false) {
+            const resourcesContainer = document.getElementById('resourcesContainer');
+            const resourceId = resourceCounter++;
+
+            const resourceHTML = `
+                <div class="resource-item" id="resource-${resourceId}">
+                    <div class="resource-item-header">
+                        <strong>Recurso ${resourceId + 1}</strong>
+                        <button type="button" class="remove-resource" onclick="removeResource(${resourceId})">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                    <div style="display: grid; gap: 10px;">
+                        <input type="text" class="form-input" placeholder="Nombre del recurso (ej: Guía PDF)" 
+                               value="${name}" data-resource-name="${resourceId}">
+                        <input type="url" class="form-input" placeholder="https://drive.google.com/..." 
+                               value="${url}" data-resource-url="${resourceId}">
+                        <select class="form-input" data-resource-icon="${resourceId}">
+                            <option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Documento</option>
+                            <option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option>
+                            <option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option>
+                            <option value="📝" ${icon === '📝' ? 'selected' : ''}>📝 Plantilla</option>
+                            <option value="🎨" ${icon === '🎨' ? 'selected' : ''}>🎨 Diseño</option>
+                            <option value="🎮" ${icon === '🎮' ? 'selected' : ''}>🎮 Ejercicio</option>
+                        </select>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" data-resource-webex="${resourceId}" ${isWebex ? 'checked' : ''}>
+                            <span>Es enlace de Cisco Webex</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+
+            resourcesContainer.insertAdjacentHTML('beforeend', resourceHTML);
+        }
+
+        // Remove Resource
+        function removeResource(resourceId) {
+            const resourceElement = document.getElementById(`resource-${resourceId}`);
+            if (resourceElement) {
+                resourceElement.remove();
+            }
+        }
+
+        // Update Course
+        function updateCourse(event) {
+            event.preventDefault();
+            
+            const courseId = document.getElementById('editCourseId').value;
+            const name = document.getElementById('editCourseName').value;
+            const category = document.getElementById('editCourseCategory').value;
+            const color = document.getElementById('editCourseColor').value;
+            const duration = document.getElementById('editCourseDuration').value;
+            const description = document.getElementById('editCourseDescription').value;
+
+            // Collect resources
+            const resources = [];
+            document.querySelectorAll('[data-resource-name]').forEach((nameInput, index) => {
+                const urlInput = document.querySelector(`[data-resource-url="${index}"]`);
+                const iconSelect = document.querySelector(`[data-resource-icon="${index}"]`);
+                const webexCheckbox = document.querySelector(`[data-resource-webex="${index}"]`);
+
+                if (nameInput.value && urlInput.value) {
+                    resources.push({
+                        name: nameInput.value,
+                        url: urlInput.value,
+                        icon: iconSelect.value,
+                        isWebex: webexCheckbox.checked
+                    });
+                }
+            });
+
+            // Update data structure
+            coursesData[courseId] = {
+                name: name,
+                category: category,
+                color: color,
+                duration: parseInt(duration),
+                description: description,
+                resources: resources
+            };
+
+            // Re-render all courses
+            renderAllCourses();
+
+            closeModal('editCourseModal');
+            showToast('✅ Curso actualizado exitosamente!');
+        }
+
+        // Delete Course
+        function deleteCourse(courseId) {
+            const courseCard = document.querySelector(`[data-course-id="${courseId}"]`);
+            
+            if (courseCard) {
+                courseCard.style.animation = 'fadeOut 0.5s';
+                setTimeout(() => {
+                    delete coursesData[courseId];
+                    renderAllCourses();
+                    showToast('✅ Curso eliminado exitosamente');
+                }, 500);
+            }
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'passwordModal') {
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordError').style.display = 'none';
+            }
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add Comment
+        function addComment() {
+            const input = document.getElementById('commentInput');
+            const comment = input.value.trim();
+            
+            if (comment) {
+                showToast('✅ Comentario publicado!');
+                input.value = '';
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            if (e.key === 'Enter' && document.getElementById('passwordModal').classList.contains('active')) {
+                verifyPassword();
+            }
+        });
+    </script>
+</body>
+</html>
