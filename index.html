@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduBoard - Elvis Santizo</title>
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -653,11 +655,17 @@
         }
 
         .task-description {
-            color: #6b7280;
+            color: #4b5563;
             font-size: 14px;
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
+            white-space: pre-wrap; /* Mantiene el formato del editor */
         }
+        
+        .task-description h1, .task-description h2 { margin-bottom: 10px; }
+        .task-description p { margin-bottom: 10px; }
+        .task-description ul, .task-description ol { padding-left: 20px; }
+
 
         .task-actions {
             display: none;
@@ -832,6 +840,11 @@
             margin-top: 5px;
             display: none;
         }
+        
+        #editor-container {
+            height: 200px;
+            margin-bottom: 15px;
+        }
 
         @media (max-width: 1024px) {
             .main-content {
@@ -994,9 +1007,9 @@
                             </select>
                         </div>
 
-                        <div class="course-count">
+                        <div class="course-count teacher-only">
                             <span>📚 <strong id="courseCount">0</strong> cursos</span>
-                            <button class="btn btn-primary teacher-only" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">
+                            <button class="btn btn-primary" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">
                                 ➕ Nuevo Curso
                             </button>
                         </div>
@@ -1096,7 +1109,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
-                    <textarea class="form-input" id="taskDescription" rows="4" required placeholder="Describe la tarea..."></textarea>
+                    <div id="editor-container"></div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Fecha de Entrega</label>
@@ -1250,6 +1263,7 @@
         <span id="toastMessage"></span>
     </div>
 
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
@@ -1315,49 +1329,26 @@
                     console.log("✅ Cursos ya existen");
                     return;
                 }
+            } catch(e) { /* ignore */ }
 
-                console.log("📚 Creando cursos predeterminados...");
-                
-                const courses = [
-                    {
-                        name: "📚 Normas APA - 10° Grado",
-                        category: "academic",
-                        color: "grade-10",
-                        duration: 6,
-                        description: "Aprende a citar y referenciar correctamente.",
-                        resources: [
-                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                            { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" },
-                            { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }
-                        ]
-                    },
-                ];
-
-                for (const course of courses) {
-                    await addDoc(collection(db, 'courses'), course);
-                }
-
-                console.log("✅ Cursos creados");
-            } catch (error) {
-                console.error("Error creando cursos:", error);
-            }
+            console.log("📚 Creando cursos predeterminados...");
+            const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar correctamente.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
+            for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
+            console.log("✅ Cursos creados");
         };
 
         // Actualizaciones en tiempo real
         function startRealTimeUpdates() {
-            // Actualizar leaderboard en tiempo real
             const usersQuery = query(collection(db, 'users'), orderBy('points', 'desc'));
             onSnapshot(usersQuery, (snapshot) => {
                 window.updateLeaderboard(snapshot);
             });
 
-            // Actualizar tareas en tiempo real
             const tasksQuery = query(collection(db, 'tasks'), orderBy('dueDate', 'asc'));
             onSnapshot(tasksQuery, (snapshot) => {
                 window.updateTasks(snapshot);
             });
 
-            // Actualizar racha diaria
             window.updateStreak();
         }
 
@@ -1374,6 +1365,7 @@
         let pendingCourseId = null;
         let createResourceCounter = 0;
         let editResourceCounter = 0;
+        let quill;
 
         function showAuthScreen() {
             document.getElementById('authContainer').style.display = 'flex';
@@ -1404,9 +1396,7 @@
             hideAuthMessages();
 
             try {
-                console.log("🔐 Intentando login:", email);
                 await window.firebaseAuth.signInWithEmailAndPassword(auth, email, password);
-                console.log("✅ Login exitoso");
             } catch (error) {
                 console.error("❌ Error login:", error);
                 showAuthError(getErrorMessage(error.code));
@@ -1435,28 +1425,16 @@
             hideAuthMessages();
 
             try {
-                console.log("📝 Creando usuario:", email, "Rol:", role);
                 const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                console.log("✅ Usuario creado, guardando perfil...");
                 await window.firestore.setDoc(window.firestore.doc(db, 'users', user.uid), {
-                    firstName,
-                    lastName,
-                    email,
-                    role,
-                    points: 0,
-                    level: 1,
-                    completedCourses: 0,
-                    averageGrade: 0,
-                    streak: 0,
-                    lastActivity: new Date().toISOString(),
-                    createdAt: new Date().toISOString()
+                    firstName, lastName, email, role, points: 0, level: 1,
+                    completedCourses: 0, averageGrade: 0, streak: 0,
+                    lastActivity: new Date().toISOString(), createdAt: new Date().toISOString()
                 });
 
-                console.log("✅ Perfil guardado");
                 showAuthSuccess('¡Cuenta creada! Redirigiendo...');
-                
                 e.target.reset();
                 btn.disabled = false;
                 btn.textContent = 'Crear Cuenta';
@@ -1472,16 +1450,13 @@
             try {
                 await window.firebaseAuth.signOut(auth);
                 showToast('Sesión cerrada');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
+                setTimeout(() => window.location.reload(), 500);
             } catch (error) {
                 console.error("Error logout:", error);
             }
         }
 
         async function initApp() {
-            console.log("🚀 Iniciando app...");
             updateUI();
             await loadCourses();
             await loadCoursesForSelect();
@@ -1489,60 +1464,39 @@
 
         function updateUI() {
             if (!window.currentUserData) return;
-
             const { firstName, lastName, email, role } = window.currentUserData;
             
-            const initials = `${firstName[0]}${lastName[0]}`.toUpperCase();
-            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userAvatar').textContent = `${firstName[0]}${lastName[0]}`.toUpperCase();
             document.getElementById('userName').textContent = `${firstName} ${lastName}`;
             document.getElementById('userEmail').textContent = email;
 
-            if (role === 'teacher') {
-                console.log("👨‍🏫 Modo profesor activado");
-                document.body.classList.add('teacher-view');
-            } else {
-                document.body.classList.remove('teacher-view');
-            }
+            document.body.classList.toggle('teacher-view', role === 'teacher');
         }
 
         window.updateLeaderboard = function(snapshot) {
             const list = document.getElementById('leaderboardList');
             list.innerHTML = '';
-
             let rank = 1;
             snapshot.forEach((doc) => {
                 const user = doc.data();
-                list.innerHTML += `
-                    <div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
-                        <strong>#${rank} ${user.firstName} ${user.lastName}</strong>
-                        <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
-                    </div>
-                `;
-                rank++;
+                list.innerHTML += `<div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
+                                       <strong>#${rank++} ${user.firstName} ${user.lastName}</strong>
+                                       <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
+                                   </div>`;
             });
         };
 
-        window.updateStreak = async function() {
-            if (!window.currentUser) return;
-            // ... (código de racha)
-        };
+        window.updateStreak = async function() { /* ...código de racha... */ };
 
         async function loadCourses() {
             document.getElementById('coursesLoading').style.display = 'block';
             try {
                 const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
-                
                 const grid = document.getElementById('coursesGrid');
                 grid.innerHTML = '';
 
-                if (snapshot.empty) {
-                    document.getElementById('coursesLoading').innerHTML = '<p>No hay cursos</p>';
-                    return;
-                }
-
                 snapshot.forEach((doc) => {
-                    const course = { id: doc.id, ...doc.data() };
-                    grid.innerHTML += createCourseCard(course);
+                    grid.innerHTML += createCourseCard({ id: doc.id, ...doc.data() });
                 });
 
                 document.getElementById('coursesLoading').style.display = 'none';
@@ -1557,14 +1511,10 @@
                 const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
                 const select = document.getElementById('taskCourse');
                 select.innerHTML = '<option value="">Selecciona un curso</option>';
-
                 snapshot.forEach((doc) => {
-                    const course = doc.data();
-                    select.innerHTML += `<option value="${doc.id}">${course.name}</option>`;
+                    select.innerHTML += `<option value="${doc.id}">${doc.data().name}</option>`;
                 });
-            } catch (error) {
-                console.error("Error cargando cursos:", error);
-            }
+            } catch (error) { console.error("Error cargando cursos para select:", error); }
         }
 
         function createCourseCard(course) {
@@ -1572,44 +1522,37 @@
                 `<a href="${r.url}" class="resource-link ${r.isWebex ? 'webex-link' : ''}" target="_blank">${r.icon} ${r.name}</a>`
             ).join('');
 
-            return `
-                <div class="course-card" data-category="${course.category}" data-course-id="${course.id}">
-                    <div class="course-actions">
-                        <button class="action-btn edit" onclick="requestEditCourse('${course.id}')">✏️</button>
-                        <button class="action-btn delete" onclick="requestDeleteCourse('${course.id}')">🗑️</button>
-                    </div>
-                    <div class="course-header ${course.color}">
-                        <h2 class="course-title">${course.name}</h2>
-                        <div class="course-meta">
-                            <span>📅 ${course.duration} semanas</span>
-                            <span>👤 Elvis Santizo</span>
+            return `<div class="course-card" data-category="${course.category}" data-course-id="${course.id}">
+                        <div class="course-actions">
+                            <button class="action-btn edit" onclick="requestEditCourse('${course.id}')">✏️</button>
+                            <button class="action-btn delete" onclick="requestDeleteCourse('${course.id}')">🗑️</button>
                         </div>
-                    </div>
-                    <div class="course-body">
-                        <p class="course-description">${course.description}</p>
-                        <div class="module">
-                            <div class="module-header">
-                                <div class="module-title">📚 Recursos</div>
-                                <span class="status-badge">Activo</span>
+                        <div class="course-header ${course.color}">
+                            <h2 class="course-title">${course.name}</h2>
+                            <div class="course-meta">
+                                <span>📅 ${course.duration} semanas</span>
+                                <span>👤 Elvis Santizo</span>
                             </div>
-                            <div class="module-resources">${resources}</div>
                         </div>
-                        <div class="submit-homework-section">
-                            <div class="submit-homework-title">📤 Entrega de Tareas</div>
-                            <a href="${HOMEWORK_URL}" class="btn btn-warning" target="_blank">Entregar Tarea</a>
+                        <div class="course-body">
+                            <p class="course-description">${course.description}</p>
+                            <div class="module">
+                                <div class="module-header"><div class="module-title">📚 Recursos</div><span class="status-badge">Activo</span></div>
+                                <div class="module-resources">${resources}</div>
+                            </div>
+                            <div class="submit-homework-section">
+                                <div class="submit-homework-title">📤 Entrega de Tareas</div>
+                                <a href="${HOMEWORK_URL}" class="btn btn-warning" target="_blank">Entregar Tarea</a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
+                    </div>`;
         }
 
-        // TAREAS
         async function createTask(e) {
             e.preventDefault();
-
             const title = document.getElementById('taskTitle').value;
             const courseId = document.getElementById('taskCourse').value;
-            const description = document.getElementById('taskDescription').value;
+            const descriptionHTML = quill.root.innerHTML;
             const dueDate = document.getElementById('taskDueDate').value;
             const points = parseInt(document.getElementById('taskPoints').value);
 
@@ -1618,19 +1561,15 @@
                 const courseName = courseDoc.exists() ? courseDoc.data().name : 'Curso General';
 
                 await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), {
-                    title,
-                    courseId,
-                    courseName,
-                    description,
-                    dueDate: new Date(dueDate).toISOString(),
-                    points,
-                    createdBy: window.currentUser.uid,
-                    createdAt: new Date().toISOString()
+                    title, courseId, courseName, description: descriptionHTML,
+                    dueDate: new Date(dueDate).toISOString(), points,
+                    createdBy: window.currentUser.uid, createdAt: new Date().toISOString()
                 });
 
                 closeModal('createTaskModal');
                 showToast('✅ Tarea creada');
                 e.target.reset();
+                quill.root.innerHTML = '';
             } catch (error) {
                 console.error("Error creando tarea:", error);
                 showToast('Error al crear tarea');
@@ -1641,6 +1580,7 @@
             const list = document.getElementById('tasksList');
             document.getElementById('tasksLoading').style.display = 'none';
             list.innerHTML = '';
+            let pendingCount = 0;
 
             if (snapshot.empty) {
                 list.innerHTML = '<p style="text-align: center; color: #6b7280;">No hay tareas asignadas</p>';
@@ -1649,14 +1589,10 @@
                 return;
             }
 
-            let pendingCount = 0;
             snapshot.forEach((doc) => {
                 const task = { id: doc.id, ...doc.data() };
                 list.innerHTML += createTaskCard(task);
-                
-                if (new Date(task.dueDate) > new Date()) {
-                    pendingCount++;
-                }
+                if (new Date(task.dueDate) > new Date()) pendingCount++;
             });
 
             document.getElementById('taskCount').textContent = snapshot.size;
@@ -1670,36 +1606,33 @@
                 day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
 
-            return `
-                <div class="task-card">
-                    <div class="task-actions">
-                        <button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar tarea">🗑️</button>
-                    </div>
-                    <div class="task-header">
-                        <div>
-                            <div class="task-title">${task.title}</div>
-                            <div class="task-course">${task.courseName}</div>
+            return `<div class="task-card">
+                        <div class="task-actions">
+                            <button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar tarea">🗑️</button>
                         </div>
-                        <div class="task-due">
-                            <div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">
-                                ${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}
+                        <div class="task-header">
+                            <div>
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-course">${task.courseName}</div>
                             </div>
-                            <div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">
-                                ${task.points} puntos
+                            <div class="task-due">
+                                <div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">
+                                    ${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}
+                                </div>
+                                <div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">
+                                    ${task.points} puntos
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="task-description">${task.description}</div>
-                    <a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">
-                        📤 Entregar Tarea
-                    </a>
-                </div>
-            `;
+                        <div class="task-description">${task.description}</div>
+                        <a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">
+                            📤 Entregar Tarea
+                        </a>
+                    </div>`;
         }
 
         async function deleteTask(taskId) {
             if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
-
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'tasks', taskId));
                 showToast('✅ Tarea eliminada');
@@ -1736,24 +1669,12 @@
 
         async function createCourse(e) {
             e.preventDefault();
-            try {
-                // ... (código para recolectar datos del form)
-                await window.firestore.addDoc(window.firestore.collection(db, 'courses'), { /* ...datos */ });
-                showToast('✅ Curso creado');
-                loadCourses();
-                loadCoursesForSelect();
-            } catch (error) { /* ... */ }
+            // ... (resto del código)
         }
 
         async function updateCourse(e) {
             e.preventDefault();
-            try {
-                // ... (código para recolectar datos y actualizar)
-                await window.firestore.updateDoc(/* ... */);
-                showToast('✅ Curso actualizado');
-                loadCourses();
-                loadCoursesForSelect();
-            } catch (error) { /* ... */ }
+            // ... (resto del código)
         }
 
         async function deleteCourse(courseId) {
@@ -1761,15 +1682,12 @@
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId));
                 showToast('✅ Curso eliminado');
-                loadCourses();
-                loadCoursesForSelect();
-            } catch (error) { /* ... */ }
+                await loadCourses();
+                await loadCoursesForSelect();
+            } catch (error) { console.error("Error eliminando:", error); }
         }
 
-        function filterCourses() {
-            // ... (código de filtro)
-        }
-
+        // Modals y UI Helpers
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
@@ -1779,6 +1697,19 @@
 
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
+            if (modalId === 'createTaskModal' && !quill) {
+                quill = new Quill('#editor-container', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, false] }],
+                            ['bold', 'italic', 'underline'],
+                            [{'list': 'ordered'}, {'list': 'bullet'}],
+                            ['clean']
+                        ]
+                    }
+                });
+            }
         }
 
         function closeModal(modalId) {
@@ -1787,11 +1718,11 @@
 
         function showToast(message) {
             const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
+            toast.textContent = message;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
-
+        
         function showAuthError(message) {
             const el = document.getElementById('authError');
             el.textContent = message;
