@@ -290,7 +290,7 @@
             display: none;
         }
 
-        .teacher-view .teacher-only {
+        body.teacher-view .teacher-only {
             display: flex; /* O 'block' según el elemento */
         }
 
@@ -454,7 +454,7 @@
             z-index: 10;
         }
 
-        .teacher-view .course-actions {
+        body.teacher-view .course-actions {
             display: flex;
         }
 
@@ -659,12 +659,11 @@
             font-size: 14px;
             margin-bottom: 15px;
             line-height: 1.6;
-            white-space: pre-wrap; /* Mantiene el formato del editor */
         }
         
-        .task-description h1, .task-description h2 { margin-bottom: 10px; }
-        .task-description p { margin-bottom: 10px; }
-        .task-description ul, .task-description ol { padding-left: 20px; }
+        .task-description h1, .task-description h2 { margin-bottom: 8px; }
+        .task-description p { margin-bottom: 8px; }
+        .task-description ul, .task-description ol { padding-left: 20px; margin-bottom: 8px; }
 
 
         .task-actions {
@@ -675,7 +674,7 @@
             right: 15px;
         }
 
-        .teacher-view .task-actions {
+        body.teacher-view .task-actions {
             display: flex;
         }
 
@@ -1178,7 +1177,7 @@
                 <div class="form-group">
                     <label class="form-label">📎 Recursos del Curso</label>
                     <div id="createResourcesContainer"></div>
-                    <button type="button" class="add-resource-btn" onclick="addCreateResourceField()">
+                    <button type="button" class="add-resource-btn" onclick="addResourceField('create')">
                         ➕ Agregar Recurso
                     </button>
                 </div>
@@ -1243,7 +1242,7 @@
                 <div class="form-group">
                     <label class="form-label">📎 Recursos del Curso</label>
                     <div id="editResourcesContainer"></div>
-                    <button type="button" class="add-resource-btn" onclick="addEditResourceField()">
+                    <button type="button" class="add-resource-btn" onclick="addResourceField('edit')">
                         ➕ Agregar Recurso
                     </button>
                 </div>
@@ -1436,11 +1435,11 @@
 
                 showAuthSuccess('¡Cuenta creada! Redirigiendo...');
                 e.target.reset();
-                btn.disabled = false;
-                btn.textContent = 'Crear Cuenta';
+                
             } catch (error) {
                 console.error("❌ Error registro:", error);
                 showAuthError(getErrorMessage(error.code));
+            } finally {
                 btn.disabled = false;
                 btn.textContent = 'Crear Cuenta';
             }
@@ -1486,7 +1485,7 @@
             });
         };
 
-        window.updateStreak = async function() { /* ...código de racha... */ };
+        window.updateStreak = async function() { /* ... */ };
 
         async function loadCourses() {
             document.getElementById('coursesLoading').style.display = 'block';
@@ -1501,9 +1500,7 @@
 
                 document.getElementById('coursesLoading').style.display = 'none';
                 document.getElementById('courseCount').textContent = snapshot.size;
-            } catch (error) {
-                console.error("Error cargando cursos:", error);
-            }
+            } catch (error) { console.error("Error cargando cursos:", error); }
         }
 
         async function loadCoursesForSelect() {
@@ -1570,10 +1567,7 @@
                 showToast('✅ Tarea creada');
                 e.target.reset();
                 quill.root.innerHTML = '';
-            } catch (error) {
-                console.error("Error creando tarea:", error);
-                showToast('Error al crear tarea');
-            }
+            } catch (error) { console.error("Error creando tarea:", error); showToast('Error al crear tarea'); }
         }
 
         window.updateTasks = function(snapshot) {
@@ -1636,13 +1630,9 @@
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'tasks', taskId));
                 showToast('✅ Tarea eliminada');
-            } catch (error) {
-                console.error("Error eliminando tarea:", error);
-                showToast('Error al eliminar tarea');
-            }
+            } catch (error) { console.error("Error eliminando tarea:", error); showToast('Error al eliminar tarea'); }
         }
 
-        // CRUD Cursos
         function requestEditCourse(courseId) {
             pendingAction = 'edit';
             pendingCourseId = courseId;
@@ -1666,28 +1656,127 @@
                 document.getElementById('passwordError').style.display = 'block';
             }
         }
-
+        
         async function createCourse(e) {
             e.preventDefault();
-            // ... (resto del código)
+            const form = e.target;
+            const data = new FormData(form);
+
+            const resources = [];
+            document.querySelectorAll('#createResourcesContainer .resource-item').forEach(item => {
+                const name = item.querySelector('input[data-create-name]').value;
+                const url = item.querySelector('input[data-create-url]').value;
+                const icon = item.querySelector('select').value;
+                const isWebex = item.querySelector('input[type="checkbox"]').checked;
+                if (name && url) {
+                    resources.push({ name, url, icon, isWebex });
+                }
+            });
+
+            try {
+                await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
+                    name: document.getElementById('createCourseName').value,
+                    category: document.getElementById('createCourseCategory').value,
+                    color: document.getElementById('createCourseColor').value,
+                    duration: parseInt(document.getElementById('createCourseDuration').value),
+                    description: document.getElementById('createCourseDescription').value,
+                    resources
+                });
+                closeModal('createCourseModal');
+                showToast('✅ Curso creado');
+                loadCourses();
+                loadCoursesForSelect();
+            } catch (error) { console.error("Error creando curso:", error); }
+        }
+        
+        async function showEditCourseModal(courseId) {
+            try {
+                const docSnap = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
+                if (!docSnap.exists()) return;
+                const course = docSnap.data();
+
+                document.getElementById('editCourseId').value = courseId;
+                document.getElementById('editCourseName').value = course.name;
+                document.getElementById('editCourseCategory').value = course.category;
+                document.getElementById('editCourseColor').value = course.color;
+                document.getElementById('editCourseDuration').value = course.duration;
+                document.getElementById('editCourseDescription').value = course.description;
+
+                const container = document.getElementById('editResourcesContainer');
+                container.innerHTML = '';
+                editResourceCounter = 0;
+                (course.resources || []).forEach(r => addEditResourceField(r.name, r.url, r.icon, r.isWebex));
+
+                openModal('editCourseModal');
+            } catch (error) { console.error("Error cargando curso para editar:", error); }
         }
 
         async function updateCourse(e) {
             e.preventDefault();
-            // ... (resto del código)
-        }
+            const courseId = document.getElementById('editCourseId').value;
+            
+            const resources = [];
+            document.querySelectorAll('#editResourcesContainer .resource-item').forEach((item, i) => {
+                const name = item.querySelector(`[data-edit-name="${i}"]`).value;
+                const url = item.querySelector(`[data-edit-url="${i}"]`).value;
+                const icon = item.querySelector(`[data-edit-icon="${i}"]`).value;
+                const isWebex = item.querySelector(`[data-edit-webex="${i}"]`).checked;
+                if (name && url) {
+                    resources.push({ name, url, icon, isWebex });
+                }
+            });
 
+            try {
+                await window.firestore.updateDoc(window.firestore.doc(db, 'courses', courseId), {
+                    name: document.getElementById('editCourseName').value,
+                    category: document.getElementById('editCourseCategory').value,
+                    color: document.getElementById('editCourseColor').value,
+                    duration: parseInt(document.getElementById('editCourseDuration').value),
+                    description: document.getElementById('editCourseDescription').value,
+                    resources
+                });
+                closeModal('editCourseModal');
+                showToast('✅ Curso actualizado');
+                loadCourses();
+            } catch (error) { console.error("Error actualizando curso:", error); }
+        }
+        
         async function deleteCourse(courseId) {
             if (!confirm('¿Seguro?')) return;
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId));
                 showToast('✅ Curso eliminado');
-                await loadCourses();
-                await loadCoursesForSelect();
+                loadCourses();
+                loadCoursesForSelect();
             } catch (error) { console.error("Error eliminando:", error); }
         }
+        
+        function addResourceField(type) {
+            const container = document.getElementById(`${type}ResourcesContainer`);
+            const counter = type === 'create' ? createResourceCounter++ : editResourceCounter++;
+            
+            container.insertAdjacentHTML('beforeend', `
+                <div class="resource-item" id="${type}-resource-${counter}">
+                    <div class="resource-item-header">
+                        <strong>Recurso ${counter + 1}</strong>
+                        <button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button>
+                    </div>
+                    <div style="display: grid; gap: 10px;">
+                        <input type="text" class="form-input" placeholder="Nombre" data-${type}-name="${counter}">
+                        <input type="url" class="form-input" placeholder="https://..." data-${type}-url="${counter}">
+                        <select class="form-input" data-${type}-icon="${counter}">
+                            <option value="📄">📄 Documento</option>
+                            <option value="📹">📹 Video</option>
+                            <option value="💻">💻 Código</option>
+                            <option value="📝">📝 Plantilla</option>
+                            <option value="🎨">🎨 Diseño</option>
+                        </select>
+                        <label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex="${counter}">Es Cisco Webex</label>
+                    </div>
+                </div>`);
+        }
 
-        // Modals y UI Helpers
+        // Helpers
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
@@ -1698,17 +1787,7 @@
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
             if (modalId === 'createTaskModal' && !quill) {
-                quill = new Quill('#editor-container', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline'],
-                            [{'list': 'ordered'}, {'list': 'bullet'}],
-                            ['clean']
-                        ]
-                    }
-                });
+                quill = new Quill('#editor-container', { theme: 'snow' });
             }
         }
 
@@ -1741,18 +1820,9 @@
         }
 
         function getErrorMessage(code) {
-            const messages = {
-                'auth/email-already-in-use': 'Correo ya registrado',
-                'auth/invalid-email': 'Correo inválido',
-                'auth/weak-password': 'Contraseña muy débil',
-                'auth/user-not-found': 'Usuario no encontrado',
-                'auth/wrong-password': 'Contraseña incorrecta',
-                'auth/network-request-failed': 'Error de conexión',
-                'auth/invalid-credential': 'Credenciales incorrectas'
-            };
+            const messages = { 'auth/invalid-credential': 'Credenciales incorrectas', /* ... */ };
             return messages[code] || 'Error de autenticación';
         }
-
     </script>
 </body>
 </html>
