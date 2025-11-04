@@ -36,7 +36,200 @@
             margin: 0 auto;
         }
 
-        /* Header */
+        /* Login/Register Screen */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo h1 {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .auth-logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: var(--light);
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: var(--success);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Main App */
+        .main-app {
+            display: none;
+        }
+
+        .main-app.show {
+            display: block;
+        }
+
         .header {
             background: var(--white);
             padding: 20px 30px;
@@ -70,36 +263,31 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
-        .role-switch {
-            background: var(--light);
-            padding: 8px 15px;
-            border-radius: 20px;
+        .user-profile {
             display: flex;
+            align-items: center;
             gap: 10px;
         }
 
-        .role-btn {
-            padding: 6px 16px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            background: transparent;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-
-        .role-btn:hover {
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .role-btn.active {
-            background: var(--primary);
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: bold;
         }
 
-        /* Gamification Panel */
+        .teacher-only {
+            display: none !important;
+        }
+
         .gamification-panel {
             background: var(--white);
             padding: 25px;
@@ -143,7 +331,6 @@
             transition: width 0.5s ease;
         }
 
-        /* Badges */
         .badges {
             display: flex;
             gap: 10px;
@@ -161,33 +348,19 @@
             font-size: 24px;
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid white;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .badge:hover {
-            transform: scale(1.1);
         }
 
         .badge.unlocked {
             background: gold;
             border-color: #fbbf24;
-            animation: bounce 0.5s;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        /* Main Content */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 30px;
         }
 
-        /* Navigation Tabs */
         .tabs {
             background: var(--white);
             padding: 15px;
@@ -219,7 +392,6 @@
             color: white;
         }
 
-        /* Search and Filter */
         .search-bar {
             background: var(--white);
             padding: 20px;
@@ -240,11 +412,6 @@
             font-size: 14px;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
         .filter-select {
             padding: 12px 20px;
             border: 2px solid var(--light);
@@ -254,7 +421,6 @@
             cursor: pointer;
         }
 
-        /* Course Cards */
         .courses-grid {
             display: grid;
             gap: 20px;
@@ -265,13 +431,12 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s;
             position: relative;
         }
 
         .course-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .course-actions {
@@ -284,7 +449,7 @@
         }
 
         .teacher-mode .course-actions {
-            display: flex;
+            display: flex !important;
         }
 
         .action-btn {
@@ -293,18 +458,16 @@
             border-radius: 50%;
             border: none;
             background: rgba(255, 255, 255, 0.95);
-            color: var(--dark);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
             font-size: 16px;
+            transition: all 0.3s;
         }
 
         .action-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .action-btn.edit:hover {
@@ -323,41 +486,15 @@
             color: white;
         }
 
-        .course-header.grade-10 {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .course-header.automation {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .course-header.innovation {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .course-header.creativity {
-            background: linear-gradient(135deg, #ec4899, #db2777);
-        }
-
-        .course-header.app-inventor {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .course-header.programming {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .course-header.animation {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-
-        .course-header.security {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-        }
-
-        .course-header.computational {
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-        }
+        .course-header.grade-10 { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .course-header.automation { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .course-header.innovation { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .course-header.creativity { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .course-header.app-inventor { background: linear-gradient(135deg, #10b981, #059669); }
+        .course-header.programming { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .course-header.animation { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .course-header.security { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .course-header.computational { background: linear-gradient(135deg, #14b8a6, #0d9488); }
 
         .course-title {
             font-size: 20px;
@@ -389,12 +526,6 @@
             background: var(--light);
             border-radius: 8px;
             margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .module:hover {
-            background: #e5e7eb;
         }
 
         .module-header {
@@ -406,9 +537,6 @@
 
         .module-title {
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
             font-size: 14px;
         }
 
@@ -417,21 +545,8 @@
             border-radius: 12px;
             font-size: 11px;
             font-weight: 600;
-        }
-
-        .status-completed {
             background: #d1fae5;
             color: var(--success);
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: var(--warning);
-        }
-
-        .status-locked {
-            background: #fee2e2;
-            color: var(--danger);
         }
 
         .module-resources {
@@ -468,7 +583,6 @@
 
         .webex-link:hover {
             background: linear-gradient(135deg, #0099CC, #007799);
-            transform: translateY(-2px);
         }
 
         .submit-homework-section {
@@ -476,51 +590,13 @@
             padding: 15px;
             background: linear-gradient(135deg, #f59e0b, #d97706);
             border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
         }
 
         .submit-homework-title {
             color: white;
             font-weight: 600;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #4f46e5;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
+            margin-bottom: 10px;
         }
 
         .btn-warning {
@@ -531,31 +607,8 @@
 
         .btn-warning:hover {
             background: #fffbeb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Sidebar */
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -573,10 +626,63 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 15px;
-            color: var(--dark);
         }
 
-        /* Modal */
+        .course-count {
+            background: var(--white);
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary);
+        }
+
+        .spinner {
+            border: 4px solid var(--light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: none;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -622,39 +728,6 @@
             border: none;
             font-size: 28px;
             cursor: pointer;
-            color: #6b7280;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .password-error {
-            color: var(--danger);
-            font-size: 13px;
-            margin-top: 5px;
-            display: none;
         }
 
         .resource-item {
@@ -667,7 +740,6 @@
         .resource-item-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 10px;
         }
 
@@ -688,364 +760,314 @@
             padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
+            width: 100%;
+            font-weight: 600;
         }
 
-        /* Responsive */
+        .password-error {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
-
-            .gamification-panel {
-                grid-template-columns: repeat(2, 1fr);
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 640px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .gamification-panel {
-                grid-template-columns: 1fr;
-            }
-
             body {
                 padding: 10px;
             }
         }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.8); }
-        }
-
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--dark);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            display: none;
-            align-items: center;
-            gap: 10px;
-            z-index: 2000;
-        }
-
-        .toast.show {
-            display: flex;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(400px); }
-            to { transform: translateX(0); }
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #6b7280;
-        }
-
-        .course-count {
-            background: var(--white);
-            padding: 15px 20px;
-            border-radius: var(--radius);
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-        }
-
-        .comment {
-            padding: 15px;
-            background: var(--light);
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .comment-author {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .comment-date {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .comment-text {
-            font-size: 14px;
-            color: var(--dark);
-            line-height: 1.5;
-        }
-
-        .comment-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            font-family: inherit;
-            resize: vertical;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .leaderboard-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: var(--light);
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .rank {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--primary);
-            min-width: 30px;
-        }
-
-        .rank-1 { color: gold; }
-        .rank-2 { color: silver; }
-        .rank-3 { color: #cd7f32; }
-
-        .leaderboard-info {
-            flex: 1;
-        }
-
-        .leaderboard-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .leaderboard-points {
-            font-size: 13px;
-            color: #6b7280;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                🎓 EduBoard
-                <span class="logo-subtitle">by Elvis Santizo</span>
-            </div>
-            <div class="user-info">
-                <div class="role-switch">
-                    <button class="role-btn active" onclick="switchRole('student')">👨‍🎓 Estudiante</button>
-                    <button class="role-btn" onclick="switchRole('teacher')">👨‍🏫 Profesor</button>
-                </div>
-                <div>
-                    <strong id="userName">Estudiante</strong>
-                </div>
-            </div>
-        </header>
-
-        <!-- Gamification Panel -->
-        <div class="gamification-panel fade-in">
-            <div class="stat-card">
-                <h3 id="totalPoints">850</h3>
-                <p>Puntos Totales</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 65%"></div>
-                </div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669)">
-                <h3 id="completedCourses">3/10</h3>
-                <p>Cursos Completados</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 30%"></div>
-                </div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
-                <h3 id="currentLevel">Nivel 5</h3>
-                <p>Rango Actual</p>
-                <div class="badges">
-                    <div class="badge unlocked">🏆</div>
-                    <div class="badge unlocked">⭐</div>
-                    <div class="badge">🎯</div>
-                </div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #ec4899, #db2777)">
-                <h3 id="avgGrade">88%</h3>
-                <p>Promedio General</p>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 88%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div>
-                <!-- Tabs -->
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('courses')">📚 Mis Cursos</button>
-                    <button class="tab-btn" onclick="switchTab('assignments')">📝 Tareas</button>
-                    <button class="tab-btn" onclick="switchTab('grades')">📊 Calificaciones</button>
-                    <button class="tab-btn teacher-only" style="display: none;" onclick="switchTab('students')">👥 Estudiantes</button>
-                </div>
-
-                <!-- Courses Tab -->
-                <div id="coursesTab" class="tab-content">
-                    <!-- Search Bar -->
-                    <div class="search-bar">
-                        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()">
-                        <select class="filter-select" id="filterSelect" onchange="filterCourses()">
-                            <option value="all">Todos los cursos</option>
-                            <option value="programming">Programación</option>
-                            <option value="apps">Creación de Apps</option>
-                            <option value="creativity">Creatividad</option>
-                            <option value="automation">Automatización</option>
-                            <option value="academic">Académico</option>
-                        </select>
-                    </div>
-
-                    <div class="course-count">
-                        <span>📚 <strong id="courseCount">10</strong> cursos disponibles</span>
-                        <button class="btn btn-primary teacher-only" style="display: none; padding: 8px 16px;" onclick="openModal('courseModal')">
-                            ➕ Nuevo Curso
-                        </button>
-                    </div>
-
-                    <div class="courses-grid" id="coursesGrid">
-                        <!-- Los cursos se cargarán dinámicamente -->
-                    </div>
-
-                    <div id="noResults" class="no-results" style="display: none;">
-                        <h3>🔍 No se encontraron cursos</h3>
-                        <p>Intenta con otros términos de búsqueda</p>
-                    </div>
-                </div>
-
-                <!-- Assignments Tab -->
-                <div id="assignmentsTab" class="tab-content" style="display: none;">
-                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de tareas</p>
-                </div>
-
-                <!-- Grades Tab -->
-                <div id="gradesTab" class="tab-content" style="display: none;">
-                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de calificaciones</p>
-                </div>
-
-                <!-- Students Tab -->
-                <div id="studentsTab" class="tab-content" style="display: none;">
-                    <p style="text-align: center; padding: 40px; color: #6b7280;">Sección de estudiantes</p>
-                </div>
+    <!-- Auth Screen -->
+    <div id="authContainer" class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <h1>🎓 EduBoard</h1>
+                <p>by Elvis Santizo</p>
             </div>
 
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <!-- Leaderboard -->
-                <div class="sidebar-card fade-in">
-                    <h3 class="sidebar-title">🏆 Tabla de Líderes</h3>
-                    <div class="leaderboard-item">
-                        <div class="rank rank-1">#1</div>
-                        <div class="leaderboard-info">
-                            <div class="leaderboard-name">Laura García</div>
-                            <div class="leaderboard-points">1,320 puntos • Nivel 8</div>
-                        </div>
+            <div class="error-message" id="authError"></div>
+            <div class="success-message" id="authSuccess"></div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showAuthTab('login')">Iniciar Sesión</button>
+                <button class="auth-tab" onclick="showAuthTab('register')">Registrarse</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-input" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-input" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombres</label>
+                        <input type="text" class="form-input" id="registerFirstName" required>
                     </div>
-                    <div class="leaderboard-item">
-                        <div class="rank rank-2">#2</div>
-                        <div class="leaderboard-info">
-                            <div class="leaderboard-name">Ana Rodríguez</div>
-                            <div class="leaderboard-points">1,150 puntos • Nivel 7</div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Apellidos</label>
+                        <input type="text" class="form-input" id="registerLastName" required>
                     </div>
                 </div>
-
-                <!-- Comments Section -->
-                <div class="sidebar-card fade-in">
-                    <h3 class="sidebar-title">💬 Comentarios Recientes</h3>
-                    
-                    <div class="comment">
-                        <div class="comment-header">
-                            <span class="comment-author">Elvis Santizo</span>
-                            <span class="comment-date">Hace 1h</span>
-                        </div>
-                        <div class="comment-text">
-                            Excelente progreso! Sigan así 🚀
-                        </div>
-                    </div>
-
-                    <textarea class="comment-input" placeholder="Escribe un comentario..." id="commentInput"></textarea>
-                    <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="addComment()">
-                        Enviar Comentario
-                    </button>
+                <div class="form-group">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-input" id="registerEmail" required>
                 </div>
-
-                <!-- Quick Stats -->
-                <div class="sidebar-card fade-in" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
-                    <h3 style="color: white; margin-bottom: 15px;">⚡ Estadísticas Rápidas</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>Tareas Pendientes:</span>
-                        <strong>2</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>Racha Actual:</span>
-                        <strong>8 días 🔥</strong>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select class="form-input" id="registerRole" required>
+                        <option value="student">👨‍🎓 Estudiante</option>
+                        <option value="teacher">👨‍🏫 Profesor</option>
+                    </select>
                 </div>
-            </aside>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-input" id="registerPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <input type="password" class="form-input" id="registerPasswordConfirm" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="registerBtn">
+                    Crear Cuenta
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Modal for Password Verification -->
+    <!-- Main App -->
+    <div id="mainApp" class="main-app">
+        <div class="container">
+            <header class="header">
+                <div class="logo">
+                    🎓 EduBoard
+                    <span class="logo-subtitle">by Elvis Santizo</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">ES</div>
+                        <div>
+                            <strong id="userName">Cargando...</strong>
+                            <div style="font-size: 12px; color: #6b7280;" id="userEmail"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" onclick="handleLogout()" style="padding: 8px 16px;">
+                        Salir
+                    </button>
+                </div>
+            </header>
+
+            <div class="gamification-panel">
+                <div class="stat-card">
+                    <h3 id="totalPoints">0</h3>
+                    <p>Puntos Totales</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="pointsProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669)">
+                    <h3 id="completedCourses">0/10</h3>
+                    <p>Cursos Completados</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="coursesProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
+                    <h3 id="currentLevel">Nivel 1</h3>
+                    <p>Rango Actual</p>
+                    <div class="badges">
+                        <div class="badge">🏆</div>
+                        <div class="badge">⭐</div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ec4899, #db2777)">
+                    <h3 id="avgGrade">0%</h3>
+                    <p>Promedio General</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gradeProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div>
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab('courses')">📚 Cursos</button>
+                        <button class="tab-btn" onclick="switchTab('assignments')">📝 Tareas</button>
+                        <button class="tab-btn teacher-only" onclick="switchTab('students')">👥 Estudiantes</button>
+                    </div>
+
+                    <div id="coursesTab" class="tab-content">
+                        <div class="search-bar">
+                            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()">
+                            <select class="filter-select" id="filterSelect" onchange="filterCourses()">
+                                <option value="all">Todos</option>
+                                <option value="programming">Programación</option>
+                                <option value="apps">Apps</option>
+                                <option value="creativity">Creatividad</option>
+                                <option value="automation">Automatización</option>
+                                <option value="academic">Académico</option>
+                            </select>
+                        </div>
+
+                        <div class="course-count">
+                            <span>📚 <strong id="courseCount">0</strong> cursos</span>
+                            <button class="btn btn-primary teacher-only" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">
+                                ➕ Nuevo Curso
+                            </button>
+                        </div>
+
+                        <div id="coursesLoading" class="loading">
+                            <div class="spinner"></div>
+                            <p>Cargando cursos...</p>
+                        </div>
+
+                        <div class="courses-grid" id="coursesGrid"></div>
+                    </div>
+
+                    <div id="assignmentsTab" class="tab-content" style="display: none;">
+                        <div class="loading"><p>Sección de tareas</p></div>
+                    </div>
+
+                    <div id="studentsTab" class="tab-content" style="display: none;">
+                        <div id="studentsList"></div>
+                    </div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-title">🏆 Top Estudiantes</h3>
+                        <div id="leaderboardList">
+                            <div class="loading">Cargando...</div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                        <h3 style="color: white; margin-bottom: 15px;">⚡ Estadísticas</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Tareas Pendientes:</span>
+                            <strong>0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Racha:</span>
+                            <strong id="currentStreak">0 días 🔥</strong>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Password Verification -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">🔒 Verificación de Seguridad</h2>
                 <button class="close-modal" onclick="closeModal('passwordModal')">&times;</button>
             </div>
-            <p style="margin-bottom: 20px; color: #6b7280;">Por seguridad, ingresa la contraseña de profesor para continuar.</p>
+            <p style="margin-bottom: 20px; color: #6b7280;">Ingresa la contraseña de profesor (5686)</p>
             <div class="form-group">
                 <label class="form-label">Contraseña</label>
-                <input type="password" class="form-input" id="passwordInput" placeholder="Ingresa la contraseña">
+                <input type="password" class="form-input" id="passwordInput" placeholder="5686">
                 <p class="password-error" id="passwordError">❌ Contraseña incorrecta</p>
             </div>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="closeModal('passwordModal')">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeModal('passwordModal')">
                     Cancelar
                 </button>
-                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="verifyPassword()">
+                <button class="btn btn-primary" style="flex: 1;" onclick="verifyPassword()">
                     Verificar
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Course Edit -->
+    <!-- Modal: Create Course -->
+    <div id="createCourseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">➕ Crear Nuevo Curso</h2>
+                <button class="close-modal" onclick="closeModal('createCourseModal')">&times;</button>
+            </div>
+            <form onsubmit="createCourse(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Curso (con emoji)</label>
+                    <input type="text" class="form-input" id="createCourseName" required placeholder="📚 Nombre del curso">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select class="form-input" id="createCourseCategory" required>
+                        <option value="programming">Programación</option>
+                        <option value="apps">Creación de Apps</option>
+                        <option value="creativity">Creatividad</option>
+                        <option value="automation">Automatización</option>
+                        <option value="academic">Académico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color del Curso</label>
+                    <select class="form-input" id="createCourseColor" required>
+                        <option value="grade-10">Rojo</option>
+                        <option value="automation">Morado</option>
+                        <option value="innovation">Naranja</option>
+                        <option value="creativity">Rosa</option>
+                        <option value="app-inventor">Verde</option>
+                        <option value="programming">Azul</option>
+                        <option value="animation">Cyan</option>
+                        <option value="security">Índigo</option>
+                        <option value="computational">Turquesa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duración (semanas)</label>
+                    <input type="number" class="form-input" id="createCourseDuration" required min="1" value="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-input" id="createCourseDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📎 Recursos del Curso</label>
+                    <div id="createResourcesContainer"></div>
+                    <button type="button" class="add-resource-btn" onclick="addCreateResourceField()">
+                        ➕ Agregar Recurso
+                    </button>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('createCourseModal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        Crear Curso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Course -->
     <div id="editCourseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1056,10 +1078,9 @@
                 <input type="hidden" id="editCourseId">
                 
                 <div class="form-group">
-                    <label class="form-label">Nombre del Curso (incluye emoji)</label>
-                    <input type="text" class="form-input" id="editCourseName" required placeholder="📚 Nombre del Curso">
+                    <label class="form-label">Nombre del Curso</label>
+                    <input type="text" class="form-input" id="editCourseName" required>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Categoría</label>
                     <select class="form-input" id="editCourseCategory" required>
@@ -1070,7 +1091,6 @@
                         <option value="academic">Académico</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Color del Curso</label>
                     <select class="form-input" id="editCourseColor" required>
@@ -1085,30 +1105,26 @@
                         <option value="computational">Turquesa</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Duración (semanas)</label>
                     <input type="number" class="form-input" id="editCourseDuration" required min="1">
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
                     <textarea class="form-input" id="editCourseDescription" rows="3" required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">📎 Recursos del Curso</label>
-                    <div id="resourcesContainer"></div>
-                    <button type="button" class="add-resource-btn" onclick="addResourceField()">
+                    <div id="editResourcesContainer"></div>
+                    <button type="button" class="add-resource-btn" onclick="addEditResourceField()">
                         ➕ Agregar Recurso
                     </button>
                 </div>
-                
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="closeModal('editCourseModal')">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('editCourseModal')">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
                         💾 Guardar Cambios
                     </button>
                 </div>
@@ -1116,490 +1132,734 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast">
         <span id="toastMessage"></span>
     </div>
 
-    <script>
-        // Password and Action Management
-        const ADMIN_PASSWORD = "5686";
-        const HOMEWORK_SUBMISSION_URL = "https://script.google.com/macros/s/AKfycbwtLFH2uFVLhYitpKVa1qgvIMdfooXbvGhfJ9wY84DWiMmFob5mObenTLdLGhOOTL7O/exec";
-        
-        let pendingAction = null;
-        let pendingCourseId = null;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-        // Courses data structure
-        let coursesData = {
-            1: {
-                name: "📚 Normas APA - 10° Grado",
-                category: "academic",
-                color: "grade-10",
-                duration: 6,
-                description: "Aprende a citar y referenciar correctamente siguiendo las normas APA 7ª edición para tus trabajos académicos.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit?usp=sharing", icon: "📄" },
-                    { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1?usp=sharing", icon: "📝" }
-                ]
-            },
-            2: {
-                name: "🤖 Automatización Inteligente con n8n",
-                category: "automation",
-                color: "automation",
-                duration: 8,
-                description: "Domina la automatización de procesos con n8n. Crea workflows inteligentes sin necesidad de programar.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Instalación", url: "https://drive.google.com/file/d/n8n-1", icon: "📄" },
-                    { name: "Plantillas", url: "https://drive.google.com/file/d/n8n-3", icon: "💻" }
-                ]
-            },
-            3: {
-                name: "💡 Innovación y Desarrollo de Ideas Digitales",
-                category: "creativity",
-                color: "innovation",
-                duration: 10,
-                description: "Desarrolla tu capacidad de innovación y aprende a transformar ideas en proyectos digitales exitosos.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Metodología", url: "https://drive.google.com/file/d/innov-1", icon: "📄" },
-                    { name: "Canvas", url: "https://drive.google.com/file/d/innov-2", icon: "🎨" }
-                ]
-            },
-            4: {
-                name: "🎨 Creatividad y Lógica Digital",
-                category: "creativity",
-                color: "creativity",
-                duration: 7,
-                description: "Combina pensamiento creativo con lógica computacional para resolver problemas de manera innovadora.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Técnicas", url: "https://drive.google.com/file/d/creative-1", icon: "📄" },
-                    { name: "Ejercicios", url: "https://drive.google.com/file/d/creative-2", icon: "🎮" }
-                ]
-            },
-            5: {
-                name: "📱 Creación de Apps con App Inventor",
-                category: "apps",
-                color: "app-inventor",
-                duration: 12,
-                description: "Crea tus propias aplicaciones móviles para Android sin necesidad de escribir código.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Guía Inicial", url: "https://drive.google.com/file/d/appinv-1", icon: "📄" },
-                    { name: "Ejemplos", url: "https://drive.google.com/file/d/appinv-2", icon: "💻" }
-                ]
-            },
-            6: {
-                name: "🚀 Creación de Apps y Proyectos Digitales",
-                category: "apps",
-                color: "programming",
-                duration: 14,
-                description: "Desarrolla proyectos digitales completos, desde la idea hasta la publicación de tu app.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Metodología", url: "https://drive.google.com/file/d/proj-1", icon: "📄" },
-                    { name: "Wireframes", url: "https://drive.google.com/file/d/proj-2", icon: "🎨" }
-                ]
-            },
-            7: {
-                name: "💻 Programación Creativa y Diseño Digital",
-                category: "programming",
-                color: "programming",
-                duration: 10,
-                description: "Aprende a programar mientras creas arte digital y proyectos visuales interactivos.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Introducción", url: "https://drive.google.com/file/d/prog-1", icon: "📄" },
-                    { name: "Código Base", url: "https://drive.google.com/file/d/prog-2", icon: "💻" }
-                ]
-            },
-            8: {
-                name: "🎬 Animación y Programación Básica",
-                category: "creativity",
-                color: "animation",
-                duration: 8,
-                description: "Combina animación digital con programación básica usando Scratch y herramientas visuales.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Guía Scratch", url: "https://drive.google.com/file/d/anim-1", icon: "📄" },
-                    { name: "Proyectos", url: "https://drive.google.com/file/d/anim-2", icon: "🎮" }
-                ]
-            },
-            9: {
-                name: "🔐 Introducción a Programación y Seguridad Digital",
-                category: "programming",
-                color: "security",
-                duration: 9,
-                description: "Aprende los fundamentos de programación mientras descubres cómo protegerte en el mundo digital.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Conceptos", url: "https://drive.google.com/file/d/sec-1", icon: "📄" },
-                    { name: "Ejercicios", url: "https://drive.google.com/file/d/sec-2", icon: "💻" }
-                ]
-            },
-            10: {
-                name: "🧠 Pensamiento Computacional Inicial",
-                category: "programming",
-                color: "computational",
-                duration: 6,
-                description: "Desarrolla habilidades de pensamiento lógico y resolución de problemas desde cero.",
-                resources: [
-                    { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
-                    { name: "Algoritmos", url: "https://drive.google.com/file/d/comp-1", icon: "📄" },
-                    { name: "Juegos Lógicos", url: "https://drive.google.com/file/d/comp-2", icon: "🎮" }
-                ]
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfiWPOjZZFG07gOQGVGkwWSVlqnpz0zmY",
+            authDomain: "lms1-16f6e.firebaseapp.com",
+            projectId: "lms1-16f6e",
+            storageBucket: "lms1-16f6e.firebasestorage.app",
+            messagingSenderId: "898231882556",
+            appId: "1:898231882556:web:a4d096beaa1c4639e3c439",
+            measurementId: "G-25KP9FG4RD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.auth = auth;
+        window.db = db;
+        window.firebaseAuth = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
+        window.firestore = { collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy };
+
+        console.log("✅ Firebase inicializado");
+
+        onAuthStateChanged(auth, async (user) => {
+            console.log("🔄 Auth cambió:", user ? user.email : "No user");
+            
+            if (user) {
+                try {
+                    console.log("📥 Cargando datos del usuario...");
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    
+                    if (userDoc.exists()) {
+                        window.currentUserData = userDoc.data();
+                        window.currentUser = user;
+                        console.log("✅ Usuario cargado:", window.currentUserData);
+                        
+                        showMainApp();
+                        await initApp();
+                    } else {
+                        console.error("❌ Documento de usuario no encontrado");
+                        await signOut(auth);
+                    }
+                } catch (error) {
+                    console.error("❌ Error cargando usuario:", error);
+                    await signOut(auth);
+                }
+            } else {
+                console.log("👋 Usuario deslogueado");
+                window.currentUser = null;
+                window.currentUserData = null;
+                showAuthScreen();
+            }
+        });
+
+        window.initDefaultCourses = async function() {
+            try {
+                const coursesSnap = await getDocs(collection(db, 'courses'));
+                if (!coursesSnap.empty) {
+                    console.log("✅ Cursos ya existen");
+                    return;
+                }
+
+                console.log("📚 Creando cursos predeterminados...");
+                
+                const courses = [
+                    {
+                        name: "📚 Normas APA - 10° Grado",
+                        category: "academic",
+                        color: "grade-10",
+                        duration: 6,
+                        description: "Aprende a citar y referenciar correctamente siguiendo las normas APA 7ª edición.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true },
+                            { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" },
+                            { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }
+                        ]
+                    },
+                    {
+                        name: "🤖 Automatización con n8n",
+                        category: "automation",
+                        color: "automation",
+                        duration: 8,
+                        description: "Domina la automatización de procesos con n8n.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "💡 Innovación y Desarrollo de Ideas Digitales",
+                        category: "creativity",
+                        color: "innovation",
+                        duration: 10,
+                        description: "Desarrolla tu capacidad de innovación.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "🎨 Creatividad y Lógica Digital",
+                        category: "creativity",
+                        color: "creativity",
+                        duration: 7,
+                        description: "Combina pensamiento creativo con lógica computacional.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "📱 Creación de Apps con App Inventor",
+                        category: "apps",
+                        color: "app-inventor",
+                        duration: 12,
+                        description: "Crea apps móviles sin código.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "🚀 Creación de Apps y Proyectos Digitales",
+                        category: "apps",
+                        color: "programming",
+                        duration: 14,
+                        description: "Desarrolla proyectos digitales completos.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "💻 Programación Creativa y Diseño Digital",
+                        category: "programming",
+                        color: "programming",
+                        duration: 10,
+                        description: "Programación y arte digital.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "🎬 Animación y Programación Básica",
+                        category: "creativity",
+                        color: "animation",
+                        duration: 8,
+                        description: "Animación con Scratch.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "🔐 Programación y Seguridad Digital",
+                        category: "programming",
+                        color: "security",
+                        duration: 9,
+                        description: "Programación y seguridad.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    },
+                    {
+                        name: "🧠 Pensamiento Computacional Inicial",
+                        category: "programming",
+                        color: "computational",
+                        duration: 6,
+                        description: "Pensamiento lógico desde cero.",
+                        resources: [
+                            { name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }
+                        ]
+                    }
+                ];
+
+                for (const course of courses) {
+                    await addDoc(collection(db, 'courses'), course);
+                }
+
+                console.log("✅ Cursos creados");
+            } catch (error) {
+                console.error("Error creando cursos:", error);
             }
         };
 
-        let resourceCounter = 0;
+        setTimeout(() => {
+            initDefaultCourses();
+        }, 2000);
+    </script>
 
-        // Initialize courses on page load
-        window.onload = function() {
-            renderAllCourses();
-        };
+    <script>
+        const ADMIN_PASSWORD = "5686";
+        const HOMEWORK_URL = "https://script.google.com/macros/s/AKfycbwtLFH2uFVLhYitpKVa1qgvIMdfooXbvGhfJ9wY84DWiMmFob5mObenTLdLGhOOTL7O/exec";
 
-        // Render all courses
-        function renderAllCourses() {
-            const coursesGrid = document.getElementById('coursesGrid');
-            coursesGrid.innerHTML = '';
+        let pendingAction = null;
+        let pendingCourseId = null;
+        let createResourceCounter = 0;
+        let editResourceCounter = 0;
 
-            Object.keys(coursesData).forEach(courseId => {
-                const course = coursesData[courseId];
-                coursesGrid.innerHTML += createCourseCard(courseId, course);
-            });
-
-            filterCourses();
+        function showAuthScreen() {
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('mainApp').classList.remove('show');
         }
 
-        // Create course card HTML
-        function createCourseCard(courseId, course) {
-            const resourcesHTML = course.resources.map(resource => {
-                const linkClass = resource.isWebex ? 'resource-link webex-link' : 'resource-link';
-                return `<a href="${resource.url}" class="${linkClass}" target="_blank">
-                    ${resource.icon} ${resource.name}
-                </a>`;
-            }).join('');
+        function showMainApp() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('mainApp').classList.add('show');
+        }
+
+        function showAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Form').classList.add('active');
+            hideAuthMessages();
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true;
+            btn.textContent = 'Iniciando sesión...';
+            hideAuthMessages();
+
+            try {
+                console.log("🔐 Intentando login:", email);
+                await window.firebaseAuth.signInWithEmailAndPassword(auth, email, password);
+                console.log("✅ Login exitoso");
+            } catch (error) {
+                console.error("❌ Error login:", error);
+                showAuthError(getErrorMessage(error.code));
+                btn.disabled = false;
+                btn.textContent = 'Iniciar Sesión';
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('registerFirstName').value.trim();
+            const lastName = document.getElementById('registerLastName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const role = document.getElementById('registerRole').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            const btn = document.getElementById('registerBtn');
+
+            if (password !== passwordConfirm) {
+                showAuthError('Las contraseñas no coinciden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Creando cuenta...';
+            hideAuthMessages();
+
+            try {
+                console.log("📝 Creando usuario:", email, "Rol:", role);
+                const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                console.log("✅ Usuario creado, guardando perfil...");
+                await window.firestore.setDoc(window.firestore.doc(db, 'users', user.uid), {
+                    firstName,
+                    lastName,
+                    email,
+                    role,
+                    points: 0,
+                    level: 1,
+                    completedCourses: 0,
+                    averageGrade: 0,
+                    streak: 0,
+                    createdAt: new Date().toISOString()
+                });
+
+                console.log("✅ Perfil guardado");
+                showAuthSuccess('¡Cuenta creada! Redirigiendo...');
+                
+                e.target.reset();
+                btn.disabled = false;
+                btn.textContent = 'Crear Cuenta';
+            } catch (error) {
+                console.error("❌ Error registro:", error);
+                showAuthError(getErrorMessage(error.code));
+                btn.disabled = false;
+                btn.textContent = 'Crear Cuenta';
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await window.firebaseAuth.signOut(auth);
+                showToast('Sesión cerrada');
+            } catch (error) {
+                console.error("Error logout:", error);
+            }
+        }
+
+        async function initApp() {
+            console.log("🚀 Iniciando app...");
+            updateUI();
+            await loadCourses();
+            await loadLeaderboard();
+        }
+
+        function updateUI() {
+            if (!window.currentUserData) return;
+
+            const { firstName, lastName, email, role, points, level, completedCourses, averageGrade, streak } = window.currentUserData;
+            
+            const initials = `${firstName[0]}${lastName[0]}`.toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = `${firstName} ${lastName}`;
+            document.getElementById('userEmail').textContent = email;
+
+            document.getElementById('totalPoints').textContent = points || 0;
+            document.getElementById('currentLevel').textContent = `Nivel ${level || 1}`;
+            document.getElementById('avgGrade').textContent = `${averageGrade || 0}%`;
+            document.getElementById('completedCourses').textContent = `${completedCourses || 0}/10`;
+            document.getElementById('currentStreak').textContent = `${streak || 0} días 🔥`;
+
+            document.getElementById('pointsProgress').style.width = Math.min((points || 0) / 10, 100) + '%';
+            document.getElementById('coursesProgress').style.width = ((completedCourses || 0) / 10 * 100) + '%';
+            document.getElementById('gradeProgress').style.width = (averageGrade || 0) + '%';
+
+            if (role === 'teacher') {
+                console.log("👨‍🏫 Modo profesor activado");
+                document.querySelectorAll('.teacher-only').forEach(el => {
+                    el.style.display = 'block';
+                });
+                document.getElementById('coursesGrid').classList.add('teacher-mode');
+            }
+        }
+
+        async function loadCourses() {
+            try {
+                console.log("📚 Cargando cursos...");
+                const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
+                
+                const grid = document.getElementById('coursesGrid');
+                grid.innerHTML = '';
+
+                if (snapshot.empty) {
+                    document.getElementById('coursesLoading').innerHTML = '<p>No hay cursos</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const course = { id: doc.id, ...doc.data() };
+                    grid.innerHTML += createCourseCard(course);
+                });
+
+                document.getElementById('coursesLoading').style.display = 'none';
+                document.getElementById('courseCount').textContent = snapshot.size;
+                
+                console.log(`✅ ${snapshot.size} cursos cargados`);
+            } catch (error) {
+                console.error("Error cargando cursos:", error);
+            }
+        }
+
+        function createCourseCard(course) {
+            const resources = (course.resources || []).map(r => 
+                `<a href="${r.url}" class="resource-link ${r.isWebex ? 'webex-link' : ''}" target="_blank">${r.icon} ${r.name}</a>`
+            ).join('');
 
             return `
-                <div class="course-card fade-in" data-category="${course.category}" data-course-id="${courseId}">
+                <div class="course-card" data-category="${course.category}" data-course-id="${course.id}">
                     <div class="course-actions">
-                        <button class="action-btn edit" onclick="editCourse(${courseId})" title="Editar curso">✏️</button>
-                        <button class="action-btn delete" onclick="requestDeleteCourse(${courseId})" title="Eliminar curso">🗑️</button>
+                        <button class="action-btn edit" onclick="requestEditCourse('${course.id}')">✏️</button>
+                        <button class="action-btn delete" onclick="requestDeleteCourse('${course.id}')">🗑️</button>
                     </div>
                     <div class="course-header ${course.color}">
                         <h2 class="course-title">${course.name}</h2>
                         <div class="course-meta">
                             <span>📅 ${course.duration} semanas</span>
                             <span>👤 Elvis Santizo</span>
-                            <span>🎯 45% Completado</span>
                         </div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">${course.description}</p>
-                        
                         <div class="module">
                             <div class="module-header">
-                                <div class="module-title">📚 Recursos del Curso</div>
-                                <span class="status-badge status-completed">Activo</span>
+                                <div class="module-title">📚 Recursos</div>
+                                <span class="status-badge">Activo</span>
                             </div>
-                            <div class="module-resources">
-                                ${resourcesHTML}
-                            </div>
+                            <div class="module-resources">${resources}</div>
                         </div>
-
                         <div class="submit-homework-section">
-                            <div class="submit-homework-title">
-                                📤 Entrega de Tareas
-                            </div>
-                            <a href="${HOMEWORK_SUBMISSION_URL}" class="btn btn-warning" target="_blank">
-                                Entregar Tarea del Curso
-                            </a>
+                            <div class="submit-homework-title">📤 Entrega de Tareas</div>
+                            <a href="${HOMEWORK_URL}" class="btn btn-warning" target="_blank">Entregar Tarea</a>
                         </div>
-
-                        <button class="btn btn-primary" style="margin-top: 15px; width: 100%; justify-content: center;">
-                            Continuar Aprendiendo →
-                        </button>
                     </div>
                 </div>
             `;
         }
 
-        // Role Switching
-        function switchRole(role) {
-            const buttons = document.querySelectorAll('.role-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        async function loadLeaderboard() {
+            try {
+                const q = window.firestore.query(
+                    window.firestore.collection(db, 'users'),
+                    window.firestore.orderBy('points', 'desc')
+                );
+                const snapshot = await window.firestore.getDocs(q);
+                
+                const list = document.getElementById('leaderboardList');
+                list.innerHTML = '';
 
-            const teacherElements = document.querySelectorAll('.teacher-only');
-            const coursesGrid = document.getElementById('coursesGrid');
-            
-            if (role === 'teacher') {
-                teacherElements.forEach(el => el.style.display = 'block');
-                coursesGrid.classList.add('teacher-mode');
-                document.getElementById('userName').textContent = 'Elvis Santizo';
-            } else {
-                teacherElements.forEach(el => el.style.display = 'none');
-                coursesGrid.classList.remove('teacher-mode');
-                document.getElementById('userName').textContent = 'Estudiante';
+                let rank = 1;
+                snapshot.forEach((doc) => {
+                    const user = doc.data();
+                    list.innerHTML += `
+                        <div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
+                            <strong>#${rank} ${user.firstName} ${user.lastName}</strong>
+                            <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
+                        </div>
+                    `;
+                    rank++;
+                });
+            } catch (error) {
+                console.error("Error leaderboard:", error);
             }
         }
 
-        // Tab Switching
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-btn');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+        // CREAR CURSO
+        function addCreateResourceField(name = '', url = '', icon = '📄', isWebex = false) {
+            const container = document.getElementById('createResourcesContainer');
+            const id = createResourceCounter++;
 
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.style.display = 'none');
-
-            document.getElementById(tabName + 'Tab').style.display = 'block';
+            container.insertAdjacentHTML('beforeend', `
+                <div class="resource-item" id="create-resource-${id}">
+                    <div class="resource-item-header">
+                        <strong>Recurso ${id + 1}</strong>
+                        <button type="button" class="remove-resource" onclick="removeCreateResource(${id})">🗑️</button>
+                    </div>
+                    <div style="display: grid; gap: 10px;">
+                        <input type="text" class="form-input" placeholder="Nombre" value="${name}" data-create-name="${id}">
+                        <input type="url" class="form-input" placeholder="https://..." value="${url}" data-create-url="${id}">
+                        <select class="form-input" data-create-icon="${id}">
+                            <option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Documento</option>
+                            <option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option>
+                            <option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option>
+                            <option value="📝" ${icon === '📝' ? 'selected' : ''}>📝 Plantilla</option>
+                            <option value="🎨" ${icon === '🎨' ? 'selected' : ''}>🎨 Diseño</option>
+                        </select>
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" data-create-webex="${id}" ${isWebex ? 'checked' : ''}>
+                            <span>Es Cisco Webex</span>
+                        </label>
+                    </div>
+                </div>
+            `);
         }
 
-        // Filter Courses
-        function filterCourses() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const filterSelect = document.getElementById('filterSelect').value;
-            const courses = document.querySelectorAll('.course-card');
-            let visibleCount = 0;
+        function removeCreateResource(id) {
+            document.getElementById(`create-resource-${id}`)?.remove();
+        }
 
-            courses.forEach(course => {
-                const title = course.querySelector('.course-title').textContent.toLowerCase();
-                const description = course.querySelector('.course-description').textContent.toLowerCase();
-                const category = course.getAttribute('data-category');
+        async function createCourse(e) {
+            e.preventDefault();
 
-                const matchesSearch = title.includes(searchInput) || description.includes(searchInput);
-                const matchesFilter = filterSelect === 'all' || category === filterSelect;
+            const name = document.getElementById('createCourseName').value;
+            const category = document.getElementById('createCourseCategory').value;
+            const color = document.getElementById('createCourseColor').value;
+            const duration = parseInt(document.getElementById('createCourseDuration').value);
+            const description = document.getElementById('createCourseDescription').value;
 
-                if (matchesSearch && matchesFilter) {
-                    course.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    course.style.display = 'none';
+            const resources = [];
+            document.querySelectorAll('[data-create-name]').forEach((el, i) => {
+                const nameInput = document.querySelector(`[data-create-name="${i}"]`);
+                const urlInput = document.querySelector(`[data-create-url="${i}"]`);
+                const iconSelect = document.querySelector(`[data-create-icon="${i}"]`);
+                const webexCheck = document.querySelector(`[data-create-webex="${i}"]`);
+
+                if (nameInput?.value && urlInput?.value) {
+                    resources.push({
+                        name: nameInput.value,
+                        url: urlInput.value,
+                        icon: iconSelect?.value || '📄',
+                        isWebex: webexCheck?.checked || false
+                    });
                 }
             });
 
-            document.getElementById('courseCount').textContent = visibleCount;
-            document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+            try {
+                await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
+                    name, category, color, duration, description, resources
+                });
+
+                closeModal('createCourseModal');
+                showToast('✅ Curso creado exitosamente');
+                await loadCourses();
+                e.target.reset();
+                document.getElementById('createResourcesContainer').innerHTML = '';
+                createResourceCounter = 0;
+            } catch (error) {
+                console.error("Error creando curso:", error);
+                showToast('Error al crear curso');
+            }
         }
 
-        // Request Delete Course
+        // EDITAR CURSO
+        function requestEditCourse(courseId) {
+            pendingAction = 'edit';
+            pendingCourseId = courseId;
+            openModal('passwordModal');
+        }
+
         function requestDeleteCourse(courseId) {
             pendingAction = 'delete';
             pendingCourseId = courseId;
             openModal('passwordModal');
         }
 
-        // Edit Course
-        function editCourse(courseId) {
-            pendingAction = 'edit';
-            pendingCourseId = courseId;
-            openModal('passwordModal');
-        }
-
-        // Verify Password
         function verifyPassword() {
             const password = document.getElementById('passwordInput').value;
-            const errorElement = document.getElementById('passwordError');
+            const errorEl = document.getElementById('passwordError');
 
             if (password === ADMIN_PASSWORD) {
                 closeModal('passwordModal');
                 document.getElementById('passwordInput').value = '';
-                errorElement.style.display = 'none';
+                errorEl.style.display = 'none';
 
-                if (pendingAction === 'delete') {
-                    deleteCourse(pendingCourseId);
-                } else if (pendingAction === 'edit') {
+                if (pendingAction === 'edit') {
                     showEditCourseModal(pendingCourseId);
+                } else if (pendingAction === 'delete') {
+                    deleteCourse(pendingCourseId);
                 }
             } else {
-                errorElement.style.display = 'block';
+                errorEl.style.display = 'block';
             }
         }
 
-        // Show Edit Course Modal
-        function showEditCourseModal(courseId) {
-            const courseData = coursesData[courseId];
-            
-            document.getElementById('editCourseId').value = courseId;
-            document.getElementById('editCourseName').value = courseData.name;
-            document.getElementById('editCourseCategory').value = courseData.category;
-            document.getElementById('editCourseColor').value = courseData.color;
-            document.getElementById('editCourseDuration').value = courseData.duration;
-            document.getElementById('editCourseDescription').value = courseData.description;
+        async function showEditCourseModal(courseId) {
+            try {
+                const courseDoc = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
+                if (!courseDoc.exists()) {
+                    showToast('Curso no encontrado');
+                    return;
+                }
 
-            // Load resources
-            const resourcesContainer = document.getElementById('resourcesContainer');
-            resourcesContainer.innerHTML = '';
-            resourceCounter = 0;
+                const course = courseDoc.data();
+                
+                document.getElementById('editCourseId').value = courseId;
+                document.getElementById('editCourseName').value = course.name;
+                document.getElementById('editCourseCategory').value = course.category;
+                document.getElementById('editCourseColor').value = course.color;
+                document.getElementById('editCourseDuration').value = course.duration;
+                document.getElementById('editCourseDescription').value = course.description;
 
-            courseData.resources.forEach((resource, index) => {
-                addResourceField(resource.name, resource.url, resource.icon, resource.isWebex);
-            });
+                const container = document.getElementById('editResourcesContainer');
+                container.innerHTML = '';
+                editResourceCounter = 0;
 
-            openModal('editCourseModal');
+                (course.resources || []).forEach(r => {
+                    addEditResourceField(r.name, r.url, r.icon, r.isWebex);
+                });
+
+                openModal('editCourseModal');
+            } catch (error) {
+                console.error("Error cargando curso:", error);
+                showToast('Error al cargar curso');
+            }
         }
 
-        // Add Resource Field
-        function addResourceField(name = '', url = '', icon = '📄', isWebex = false) {
-            const resourcesContainer = document.getElementById('resourcesContainer');
-            const resourceId = resourceCounter++;
+        function addEditResourceField(name = '', url = '', icon = '📄', isWebex = false) {
+            const container = document.getElementById('editResourcesContainer');
+            const id = editResourceCounter++;
 
-            const resourceHTML = `
-                <div class="resource-item" id="resource-${resourceId}">
+            container.insertAdjacentHTML('beforeend', `
+                <div class="resource-item" id="edit-resource-${id}">
                     <div class="resource-item-header">
-                        <strong>Recurso ${resourceId + 1}</strong>
-                        <button type="button" class="remove-resource" onclick="removeResource(${resourceId})">
-                            🗑️ Eliminar
-                        </button>
+                        <strong>Recurso ${id + 1}</strong>
+                        <button type="button" class="remove-resource" onclick="removeEditResource(${id})">🗑️</button>
                     </div>
                     <div style="display: grid; gap: 10px;">
-                        <input type="text" class="form-input" placeholder="Nombre del recurso (ej: Guía PDF)" 
-                               value="${name}" data-resource-name="${resourceId}">
-                        <input type="url" class="form-input" placeholder="https://drive.google.com/..." 
-                               value="${url}" data-resource-url="${resourceId}">
-                        <select class="form-input" data-resource-icon="${resourceId}">
+                        <input type="text" class="form-input" placeholder="Nombre" value="${name}" data-edit-name="${id}">
+                        <input type="url" class="form-input" placeholder="https://..." value="${url}" data-edit-url="${id}">
+                        <select class="form-input" data-edit-icon="${id}">
                             <option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Documento</option>
                             <option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option>
                             <option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option>
                             <option value="📝" ${icon === '📝' ? 'selected' : ''}>📝 Plantilla</option>
                             <option value="🎨" ${icon === '🎨' ? 'selected' : ''}>🎨 Diseño</option>
-                            <option value="🎮" ${icon === '🎮' ? 'selected' : ''}>🎮 Ejercicio</option>
                         </select>
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" data-resource-webex="${resourceId}" ${isWebex ? 'checked' : ''}>
-                            <span>Es enlace de Cisco Webex</span>
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" data-edit-webex="${id}" ${isWebex ? 'checked' : ''}>
+                            <span>Es Cisco Webex</span>
                         </label>
                     </div>
                 </div>
-            `;
-
-            resourcesContainer.insertAdjacentHTML('beforeend', resourceHTML);
+            `);
         }
 
-        // Remove Resource
-        function removeResource(resourceId) {
-            const resourceElement = document.getElementById(`resource-${resourceId}`);
-            if (resourceElement) {
-                resourceElement.remove();
-            }
+        function removeEditResource(id) {
+            document.getElementById(`edit-resource-${id}`)?.remove();
         }
 
-        // Update Course
-        function updateCourse(event) {
-            event.preventDefault();
-            
+        async function updateCourse(e) {
+            e.preventDefault();
+
             const courseId = document.getElementById('editCourseId').value;
             const name = document.getElementById('editCourseName').value;
             const category = document.getElementById('editCourseCategory').value;
             const color = document.getElementById('editCourseColor').value;
-            const duration = document.getElementById('editCourseDuration').value;
+            const duration = parseInt(document.getElementById('editCourseDuration').value);
             const description = document.getElementById('editCourseDescription').value;
 
-            // Collect resources
             const resources = [];
-            document.querySelectorAll('[data-resource-name]').forEach((nameInput, index) => {
-                const urlInput = document.querySelector(`[data-resource-url="${index}"]`);
-                const iconSelect = document.querySelector(`[data-resource-icon="${index}"]`);
-                const webexCheckbox = document.querySelector(`[data-resource-webex="${index}"]`);
+            document.querySelectorAll('[data-edit-name]').forEach((el, i) => {
+                const nameInput = document.querySelector(`[data-edit-name="${i}"]`);
+                const urlInput = document.querySelector(`[data-edit-url="${i}"]`);
+                const iconSelect = document.querySelector(`[data-edit-icon="${i}"]`);
+                const webexCheck = document.querySelector(`[data-edit-webex="${i}"]`);
 
-                if (nameInput.value && urlInput.value) {
+                if (nameInput?.value && urlInput?.value) {
                     resources.push({
                         name: nameInput.value,
                         url: urlInput.value,
-                        icon: iconSelect.value,
-                        isWebex: webexCheckbox.checked
+                        icon: iconSelect?.value || '📄',
+                        isWebex: webexCheck?.checked || false
                     });
                 }
             });
 
-            // Update data structure
-            coursesData[courseId] = {
-                name: name,
-                category: category,
-                color: color,
-                duration: parseInt(duration),
-                description: description,
-                resources: resources
-            };
+            try {
+                await window.firestore.updateDoc(window.firestore.doc(db, 'courses', courseId), {
+                    name, category, color, duration, description, resources
+                });
 
-            // Re-render all courses
-            renderAllCourses();
-
-            closeModal('editCourseModal');
-            showToast('✅ Curso actualizado exitosamente!');
-        }
-
-        // Delete Course
-        function deleteCourse(courseId) {
-            const courseCard = document.querySelector(`[data-course-id="${courseId}"]`);
-            
-            if (courseCard) {
-                courseCard.style.animation = 'fadeOut 0.5s';
-                setTimeout(() => {
-                    delete coursesData[courseId];
-                    renderAllCourses();
-                    showToast('✅ Curso eliminado exitosamente');
-                }, 500);
+                closeModal('editCourseModal');
+                showToast('✅ Curso actualizado');
+                await loadCourses();
+            } catch (error) {
+                console.error("Error actualizando:", error);
+                showToast('Error al actualizar');
             }
         }
 
-        // Modal Functions
+        async function deleteCourse(courseId) {
+            try {
+                await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId));
+                showToast('✅ Curso eliminado');
+                await loadCourses();
+            } catch (error) {
+                console.error("Error eliminando:", error);
+                showToast('Error al eliminar');
+            }
+        }
+
+        function filterCourses() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.getElementById('filterSelect').value;
+            const cards = document.querySelectorAll('.course-card');
+            let count = 0;
+
+            cards.forEach(card => {
+                const title = card.querySelector('.course-title').textContent.toLowerCase();
+                const category = card.getAttribute('data-category');
+                
+                const matchSearch = title.includes(search);
+                const matchFilter = filter === 'all' || category === filter;
+
+                if (matchSearch && matchFilter) {
+                    card.style.display = 'block';
+                    count++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('courseCount').textContent = count;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+        }
+
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
-            if (modalId === 'passwordModal') {
-                document.getElementById('passwordInput').value = '';
-                document.getElementById('passwordError').style.display = 'none';
-            }
         }
 
-        // Close modal on outside click
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        }
-
-        // Toast Notification
         function showToast(message) {
             const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            toastMessage.textContent = message;
+            document.getElementById('toastMessage').textContent = message;
             toast.classList.add('show');
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Add Comment
-        function addComment() {
-            const input = document.getElementById('commentInput');
-            const comment = input.value.trim();
-            
-            if (comment) {
-                showToast('✅ Comentario publicado!');
-                input.value = '';
-            }
+        function showAuthError(message) {
+            const el = document.getElementById('authError');
+            el.textContent = message;
+            el.classList.add('show');
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-            }
-            if (e.key === 'Enter' && document.getElementById('passwordModal').classList.contains('active')) {
-                verifyPassword();
-            }
-        });
+        function showAuthSuccess(message) {
+            const el = document.getElementById('authSuccess');
+            el.textContent = message;
+            el.classList.add('show');
+        }
+
+        function hideAuthMessages() {
+            document.getElementById('authError').classList.remove('show');
+            document.getElementById('authSuccess').classList.remove('show');
+        }
+
+        function getErrorMessage(code) {
+            const messages = {
+                'auth/email-already-in-use': 'Este correo ya está registrado',
+                'auth/invalid-email': 'Correo inválido',
+                'auth/weak-password': 'Contraseña muy débil (mín. 6 caracteres)',
+                'auth/user-not-found': 'Usuario no encontrado',
+                'auth/wrong-password': 'Contraseña incorrecta',
+                'auth/network-request-failed': 'Error de conexión',
+                'auth/invalid-credential': 'Credenciales incorrectas'
+            };
+            return messages[code] || 'Error de autenticación';
+        }
     </script>
 </body>
 </html>
