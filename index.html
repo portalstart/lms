@@ -911,7 +911,7 @@
                 <div>
                     <div class="tabs"><button class="tab-btn active" onclick="switchTab('courses')">📚 Cursos</button><button class="tab-btn" onclick="switchTab('assignments')">📝 Tareas</button><button class="tab-btn teacher-only" onclick="switchTab('students')">👥 Estudiantes</button></div>
                     <div id="coursesTab" class="tab-content"><div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()"><select class="filter-select" id="filterSelect" onchange="filterCourses()"><option value="all">Todos</option><option value="programming">Programación</option><option value="apps">Apps</option><option value="creativity">Creatividad</option><option value="automation">Automatización</option><option value="academic">Académico</option></select></div><div class="course-count teacher-only"><span>📚 <strong id="courseCount">0</strong> cursos</span><button class="btn btn-primary" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">➕ Nuevo Curso</button></div><div id="coursesLoading" class="loading"><div class="spinner"></div><p>Cargando cursos...</p></div><div class="courses-grid" id="coursesGrid"></div></div>
-                    <div id="assignmentsTab" class="tab-content" style="display: none;"><div class="course-count"><span class="teacher-only">📝 <strong id="taskCount">0</strong> tareas</span><button class="btn btn-success teacher-only" style="padding: 8px 16px;" onclick="openModal('createTaskModal')">➕ Crear Tarea</button></div><div id="tasksLoading" class="loading"><div class="spinner"></div><p>Cargando tareas...</p></div><div id="tasksList"></div></div>
+                    <div id="assignmentsTab" class="tab-content" style="display: none;"><div class="course-count"><span id="taskCountContainer">📝 <strong id="taskCount">0</strong> tareas</span><button class="btn btn-success teacher-only" style="padding: 8px 16px;" onclick="openModal('createTaskModal')">➕ Crear Tarea</button></div><div id="tasksLoading" class="loading"><div class="spinner"></div><p>Cargando tareas...</p></div><div id="tasksList"></div></div>
                     <div id="studentsTab" class="tab-content" style="display: none;"><div id="studentsList"></div></div>
                 </div>
                 <aside class="sidebar"><div class="sidebar-card"><h3 class="sidebar-title">🏆 Top Estudiantes</h3><div id="leaderboardList"><div class="loading">Cargando...</div></div></div><div class="sidebar-card" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;"><h3 style="color: white; margin-bottom: 15px;">⚡ Estadísticas</h3><div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><span>Tareas Pendientes:</span><strong id="pendingTasks">0</strong></div><div style="display: flex; justify-content: space-between;"><span>Racha:</span><strong id="currentStreak">0 días 🔥</strong></div></div></aside>
@@ -1031,7 +1031,8 @@
             try {
                 const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
                 await window.firestore.setDoc(window.firestore.doc(db, 'users', userCredential.user.uid), {
-                    firstName, lastName, email, role, points: 0, level: 1, completedCourses: 0, averageGrade: 0, streak: 0,
+                    firstName, lastName, email, role, points: 0, level: 1,
+                    completedCourses: 0, averageGrade: 0, streak: 0,
                     lastActivity: new Date().toISOString(), createdAt: new Date().toISOString(), completedTasks: []
                 });
                 showAuthSuccess('¡Cuenta creada! Redirigiendo...'); e.target.reset();
@@ -1169,12 +1170,16 @@
             e.preventDefault();
             const resources = [];
             document.querySelectorAll('#createResourcesContainer .resource-item').forEach(item => {
-                const name = item.querySelector('[data-create-name]').value;
-                const url = item.querySelector('[data-create-url]').value;
+                const name = item.querySelector('input[data-create-name]').value;
+                const url = item.querySelector('input[data-create-url]').value;
                 if (name && url) resources.push({ name, url, icon: item.querySelector('select').value, isWebex: item.querySelector('input[type="checkbox"]').checked });
             });
             try {
-                await window.firestore.addDoc(window.firestore.collection(db, 'courses'), { name: document.getElementById('createCourseName').value, category: document.getElementById('createCourseCategory').value, color: document.getElementById('createCourseColor').value, duration: parseInt(document.getElementById('createCourseDuration').value), description: document.getElementById('createCourseDescription').value, resources });
+                await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
+                    name: document.getElementById('createCourseName').value, category: document.getElementById('createCourseCategory').value,
+                    color: document.getElementById('createCourseColor').value, duration: parseInt(document.getElementById('createCourseDuration').value),
+                    description: document.getElementById('createCourseDescription').value, resources
+                });
                 closeModal('createCourseModal'); showToast('✅ Curso creado'); await loadCourses(); await loadCoursesForSelect();
             } catch (error) { console.error("Error creando curso:", error); }
         }
@@ -1190,8 +1195,7 @@
                 document.getElementById('editCourseColor').value = course.color;
                 document.getElementById('editCourseDuration').value = course.duration;
                 document.getElementById('editCourseDescription').value = course.description;
-                const container = document.getElementById('editResourcesContainer');
-                container.innerHTML = ''; editResourceCounter = 0;
+                const container = document.getElementById('editResourcesContainer'); container.innerHTML = ''; editResourceCounter = 0;
                 (course.resources || []).forEach(r => addResourceField('edit', r.name, r.url, r.icon, r.isWebex));
                 openModal('editCourseModal');
             } catch (error) { console.error("Error cargando curso para editar:", error); }
@@ -1202,13 +1206,11 @@
             const courseId = document.getElementById('editCourseId').value;
             const resources = [];
             document.querySelectorAll('#editResourcesContainer .resource-item').forEach(item => {
-                const nameInput = item.querySelector('input[data-edit-name]');
-                const urlInput = item.querySelector('input[data-edit-url]');
-                const iconSelect = item.querySelector('select[data-edit-icon]');
-                const webexCheckbox = item.querySelector('input[data-edit-webex]');
-                if (nameInput && urlInput && nameInput.value && urlInput.value) {
-                    resources.push({ name: nameInput.value, url: urlInput.value, icon: iconSelect.value, isWebex: webexCheckbox.checked });
-                }
+                const name = item.querySelector('input[data-edit-name]').value;
+                const url = item.querySelector('input[data-edit-url]').value;
+                const icon = item.querySelector('select[data-edit-icon]').value;
+                const isWebex = item.querySelector('input[data-edit-webex]').checked;
+                if (name && url) resources.push({ name, url, icon, isWebex });
             });
             try {
                 await window.firestore.updateDoc(window.firestore.doc(db, 'courses', courseId), {
@@ -1225,12 +1227,13 @@
             try { await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId)); showToast('✅ Curso eliminado'); await loadCourses(); await loadCoursesForSelect(); } catch (error) { console.error("Error eliminando:", error); }
         }
 
-        function addResourceField(type, name = '', url = '', icon = '📄', isWebex = false) {
+        function addResourceField(type) {
             const container = document.getElementById(`${type}ResourcesContainer`);
             const counter = type === 'create' ? createResourceCounter++ : editResourceCounter++;
-            container.insertAdjacentHTML('beforeend', `<div class="resource-item" id="${type}-resource-${counter}"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" value="${name}" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" value="${url}" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Doc</option><option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option><option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex" ${isWebex ? 'checked' : ''}>Es Webex</label></div></div>`);
+            container.insertAdjacentHTML('beforeend', `<div class="resource-item" id="${type}-resource-${counter}"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄">📄 Doc</option><option value="📹">📹 Video</option><option value="💻">💻 Código</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex>Es Webex</label></div></div>`);
         }
 
+        // Helpers
         function switchTab(tabName) { document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); document.getElementById(tabName + 'Tab').style.display = 'block'; }
         function openModal(modalId) { document.getElementById(modalId).classList.add('active'); if (modalId === 'createTaskModal' && !quill) quill = new Quill('#editor-container', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered'}, { 'list': 'bullet'}], ['clean']] } }); }
         function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
