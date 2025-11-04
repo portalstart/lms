@@ -661,9 +661,9 @@
             line-height: 1.6;
         }
         
-        .task-description h1, .task-description h2 { margin-bottom: 8px; }
-        .task-description p { margin-bottom: 8px; }
-        .task-description ul, .task-description ol { padding-left: 20px; margin-bottom: 8px; }
+        .task-description h1, .task-description h2 { margin-bottom: 6px; }
+        .task-description p { margin-bottom: 6px; }
+        .task-description ul, .task-description ol { padding-left: 20px; margin-bottom: 6px; }
 
 
         .task-actions {
@@ -1287,34 +1287,19 @@
         window.firebaseAuth = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
         window.firestore = { collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, where, Timestamp };
 
-        console.log("✅ Firebase inicializado");
-
         onAuthStateChanged(auth, async (user) => {
-            console.log("🔄 Auth cambió:", user ? user.email : "No user");
-            
             if (user) {
                 try {
-                    console.log("📥 Cargando datos del usuario...");
                     const userDoc = await getDoc(doc(db, 'users', user.uid));
-                    
                     if (userDoc.exists()) {
                         window.currentUserData = userDoc.data();
                         window.currentUser = user;
-                        console.log("✅ Usuario cargado:", window.currentUserData);
-                        
                         showMainApp();
                         await initApp();
                         startRealTimeUpdates();
-                    } else {
-                        console.error("❌ Documento de usuario no encontrado");
-                        await signOut(auth);
-                    }
-                } catch (error) {
-                    console.error("❌ Error cargando usuario:", error);
-                    await signOut(auth);
-                }
+                    } else { await signOut(auth); }
+                } catch (error) { await signOut(auth); }
             } else {
-                console.log("👋 Usuario deslogueado");
                 window.currentUser = null;
                 window.currentUserData = null;
                 showAuthScreen();
@@ -1324,36 +1309,24 @@
         window.initDefaultCourses = async function() {
             try {
                 const coursesSnap = await getDocs(collection(db, 'courses'));
-                if (!coursesSnap.empty) {
-                    console.log("✅ Cursos ya existen");
-                    return;
-                }
+                if (!coursesSnap.empty) return;
             } catch(e) { /* ignore */ }
 
-            console.log("📚 Creando cursos predeterminados...");
-            const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar correctamente.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
+            const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
             for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
-            console.log("✅ Cursos creados");
         };
 
-        // Actualizaciones en tiempo real
         function startRealTimeUpdates() {
             const usersQuery = query(collection(db, 'users'), orderBy('points', 'desc'));
-            onSnapshot(usersQuery, (snapshot) => {
-                window.updateLeaderboard(snapshot);
-            });
+            onSnapshot(usersQuery, (snapshot) => window.updateLeaderboard(snapshot));
 
             const tasksQuery = query(collection(db, 'tasks'), orderBy('dueDate', 'asc'));
-            onSnapshot(tasksQuery, (snapshot) => {
-                window.updateTasks(snapshot);
-            });
+            onSnapshot(tasksQuery, (snapshot) => window.updateTasks(snapshot));
 
             window.updateStreak();
         }
 
-        setTimeout(() => {
-            initDefaultCourses();
-        }, 2000);
+        setTimeout(() => initDefaultCourses(), 2000);
     </script>
 
     <script>
@@ -1366,20 +1339,13 @@
         let editResourceCounter = 0;
         let quill;
 
-        function showAuthScreen() {
-            document.getElementById('authContainer').style.display = 'flex';
-            document.getElementById('mainApp').classList.remove('show');
-        }
-
-        function showMainApp() {
-            document.getElementById('authContainer').style.display = 'none';
-            document.getElementById('mainApp').classList.add('show');
-        }
+        function showAuthScreen() { document.getElementById('authContainer').style.display = 'flex'; document.getElementById('mainApp').classList.remove('show'); }
+        function showMainApp() { document.getElementById('authContainer').style.display = 'none'; document.getElementById('mainApp').classList.add('show'); }
 
         function showAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
             event.target.classList.add('active');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
             document.getElementById(tab + 'Form').classList.add('active');
             hideAuthMessages();
         }
@@ -1389,7 +1355,6 @@
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('loginBtn');
-
             btn.disabled = true;
             btn.textContent = 'Iniciando sesión...';
             hideAuthMessages();
@@ -1397,8 +1362,8 @@
             try {
                 await window.firebaseAuth.signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error("❌ Error login:", error);
                 showAuthError(getErrorMessage(error.code));
+            } finally {
                 btn.disabled = false;
                 btn.textContent = 'Iniciar Sesión';
             }
@@ -1435,9 +1400,7 @@
 
                 showAuthSuccess('¡Cuenta creada! Redirigiendo...');
                 e.target.reset();
-                
             } catch (error) {
-                console.error("❌ Error registro:", error);
                 showAuthError(getErrorMessage(error.code));
             } finally {
                 btn.disabled = false;
@@ -1448,11 +1411,8 @@
         async function handleLogout() {
             try {
                 await window.firebaseAuth.signOut(auth);
-                showToast('Sesión cerrada');
                 setTimeout(() => window.location.reload(), 500);
-            } catch (error) {
-                console.error("Error logout:", error);
-            }
+            } catch (error) { console.error("Error logout:", error); }
         }
 
         async function initApp() {
@@ -1464,28 +1424,23 @@
         function updateUI() {
             if (!window.currentUserData) return;
             const { firstName, lastName, email, role } = window.currentUserData;
-            
             document.getElementById('userAvatar').textContent = `${firstName[0]}${lastName[0]}`.toUpperCase();
             document.getElementById('userName').textContent = `${firstName} ${lastName}`;
             document.getElementById('userEmail').textContent = email;
-
             document.body.classList.toggle('teacher-view', role === 'teacher');
         }
 
-        window.updateLeaderboard = function(snapshot) {
+        window.updateLeaderboard = (snapshot) => {
             const list = document.getElementById('leaderboardList');
             list.innerHTML = '';
             let rank = 1;
             snapshot.forEach((doc) => {
                 const user = doc.data();
-                list.innerHTML += `<div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
-                                       <strong>#${rank++} ${user.firstName} ${user.lastName}</strong>
-                                       <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
-                                   </div>`;
+                list.innerHTML += `<div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;"><strong>#${rank++} ${user.firstName} ${user.lastName}</strong><div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div></div>`;
             });
         };
 
-        window.updateStreak = async function() { /* ... */ };
+        window.updateStreak = async () => { /* ... */ };
 
         async function loadCourses() {
             document.getElementById('coursesLoading').style.display = 'block';
@@ -1493,11 +1448,7 @@
                 const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
                 const grid = document.getElementById('coursesGrid');
                 grid.innerHTML = '';
-
-                snapshot.forEach((doc) => {
-                    grid.innerHTML += createCourseCard({ id: doc.id, ...doc.data() });
-                });
-
+                snapshot.forEach((doc) => grid.innerHTML += createCourseCard({ id: doc.id, ...doc.data() }));
                 document.getElementById('coursesLoading').style.display = 'none';
                 document.getElementById('courseCount').textContent = snapshot.size;
             } catch (error) { console.error("Error cargando cursos:", error); }
@@ -1508,41 +1459,13 @@
                 const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
                 const select = document.getElementById('taskCourse');
                 select.innerHTML = '<option value="">Selecciona un curso</option>';
-                snapshot.forEach((doc) => {
-                    select.innerHTML += `<option value="${doc.id}">${doc.data().name}</option>`;
-                });
+                snapshot.forEach((doc) => select.innerHTML += `<option value="${doc.id}">${doc.data().name}</option>`);
             } catch (error) { console.error("Error cargando cursos para select:", error); }
         }
 
         function createCourseCard(course) {
-            const resources = (course.resources || []).map(r => 
-                `<a href="${r.url}" class="resource-link ${r.isWebex ? 'webex-link' : ''}" target="_blank">${r.icon} ${r.name}</a>`
-            ).join('');
-
-            return `<div class="course-card" data-category="${course.category}" data-course-id="${course.id}">
-                        <div class="course-actions">
-                            <button class="action-btn edit" onclick="requestEditCourse('${course.id}')">✏️</button>
-                            <button class="action-btn delete" onclick="requestDeleteCourse('${course.id}')">🗑️</button>
-                        </div>
-                        <div class="course-header ${course.color}">
-                            <h2 class="course-title">${course.name}</h2>
-                            <div class="course-meta">
-                                <span>📅 ${course.duration} semanas</span>
-                                <span>👤 Elvis Santizo</span>
-                            </div>
-                        </div>
-                        <div class="course-body">
-                            <p class="course-description">${course.description}</p>
-                            <div class="module">
-                                <div class="module-header"><div class="module-title">📚 Recursos</div><span class="status-badge">Activo</span></div>
-                                <div class="module-resources">${resources}</div>
-                            </div>
-                            <div class="submit-homework-section">
-                                <div class="submit-homework-title">📤 Entrega de Tareas</div>
-                                <a href="${HOMEWORK_URL}" class="btn btn-warning" target="_blank">Entregar Tarea</a>
-                            </div>
-                        </div>
-                    </div>`;
+            const resources = (course.resources || []).map(r => `<a href="${r.url}" class="resource-link ${r.isWebex ? 'webex-link' : ''}" target="_blank">${r.icon} ${r.name}</a>`).join('');
+            return `<div class="course-card" data-category="${course.category}" data-course-id="${course.id}"><div class="course-actions"><button class="action-btn edit" onclick="requestEditCourse('${course.id}')">✏️</button><button class="action-btn delete" onclick="requestDeleteCourse('${course.id}')">🗑️</button></div><div class="course-header ${course.color}"><h2 class="course-title">${course.name}</h2><div class="course-meta"><span>📅 ${course.duration} semanas</span><span>👤 Elvis Santizo</span></div></div><div class="course-body"><p class="course-description">${course.description}</p><div class="module"><div class="module-header"><div class="module-title">📚 Recursos</div><span class="status-badge">Activo</span></div><div class="module-resources">${resources}</div></div><div class="submit-homework-section"><div class="submit-homework-title">📤 Entrega de Tareas</div><a href="${HOMEWORK_URL}" class="btn btn-warning" target="_blank">Entregar Tarea</a></div></div></div>`;
         }
 
         async function createTask(e) {
@@ -1552,17 +1475,10 @@
             const descriptionHTML = quill.root.innerHTML;
             const dueDate = document.getElementById('taskDueDate').value;
             const points = parseInt(document.getElementById('taskPoints').value);
-
             try {
                 const courseDoc = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
                 const courseName = courseDoc.exists() ? courseDoc.data().name : 'Curso General';
-
-                await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), {
-                    title, courseId, courseName, description: descriptionHTML,
-                    dueDate: new Date(dueDate).toISOString(), points,
-                    createdBy: window.currentUser.uid, createdAt: new Date().toISOString()
-                });
-
+                await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), { title, courseId, courseName, description: descriptionHTML, dueDate: new Date(dueDate).toISOString(), points, createdBy: window.currentUser.uid, createdAt: new Date().toISOString() });
                 closeModal('createTaskModal');
                 showToast('✅ Tarea creada');
                 e.target.reset();
@@ -1570,25 +1486,22 @@
             } catch (error) { console.error("Error creando tarea:", error); showToast('Error al crear tarea'); }
         }
 
-        window.updateTasks = function(snapshot) {
+        window.updateTasks = (snapshot) => {
             const list = document.getElementById('tasksList');
             document.getElementById('tasksLoading').style.display = 'none';
             list.innerHTML = '';
             let pendingCount = 0;
-
             if (snapshot.empty) {
                 list.innerHTML = '<p style="text-align: center; color: #6b7280;">No hay tareas asignadas</p>';
                 document.getElementById('taskCount').textContent = '0';
                 document.getElementById('pendingTasks').textContent = '0';
                 return;
             }
-
             snapshot.forEach((doc) => {
                 const task = { id: doc.id, ...doc.data() };
                 list.innerHTML += createTaskCard(task);
                 if (new Date(task.dueDate) > new Date()) pendingCount++;
             });
-
             document.getElementById('taskCount').textContent = snapshot.size;
             document.getElementById('pendingTasks').textContent = pendingCount;
         };
@@ -1596,33 +1509,8 @@
         function createTaskCard(task) {
             const dueDate = new Date(task.dueDate);
             const isOverdue = dueDate < new Date();
-            const formattedDate = dueDate.toLocaleDateString('es-ES', {
-                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-            });
-
-            return `<div class="task-card">
-                        <div class="task-actions">
-                            <button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar tarea">🗑️</button>
-                        </div>
-                        <div class="task-header">
-                            <div>
-                                <div class="task-title">${task.title}</div>
-                                <div class="task-course">${task.courseName}</div>
-                            </div>
-                            <div class="task-due">
-                                <div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">
-                                    ${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}
-                                </div>
-                                <div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">
-                                    ${task.points} puntos
-                                </div>
-                            </div>
-                        </div>
-                        <div class="task-description">${task.description}</div>
-                        <a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">
-                            📤 Entregar Tarea
-                        </a>
-                    </div>`;
+            const formattedDate = dueDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            return `<div class="task-card"><div class="task-actions"><button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar tarea">🗑️</button></div><div class="task-header"><div><div class="task-title">${task.title}</div><div class="task-course">${task.courseName}</div></div><div class="task-due"><div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}</div><div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">${task.points} puntos</div></div></div><div class="task-description">${task.description}</div><a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">📤 Entregar Tarea</a></div>`;
         }
 
         async function deleteTask(taskId) {
@@ -1656,57 +1544,41 @@
                 document.getElementById('passwordError').style.display = 'block';
             }
         }
-        
+
         async function createCourse(e) {
             e.preventDefault();
             const form = e.target;
-            const data = new FormData(form);
-
             const resources = [];
             document.querySelectorAll('#createResourcesContainer .resource-item').forEach(item => {
                 const name = item.querySelector('input[data-create-name]').value;
                 const url = item.querySelector('input[data-create-url]').value;
-                const icon = item.querySelector('select').value;
-                const isWebex = item.querySelector('input[type="checkbox"]').checked;
-                if (name && url) {
-                    resources.push({ name, url, icon, isWebex });
-                }
+                if (name && url) resources.push({ name, url, icon: item.querySelector('select').value, isWebex: item.querySelector('input[type="checkbox"]').checked });
             });
-
             try {
                 await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
-                    name: document.getElementById('createCourseName').value,
-                    category: document.getElementById('createCourseCategory').value,
-                    color: document.getElementById('createCourseColor').value,
-                    duration: parseInt(document.getElementById('createCourseDuration').value),
-                    description: document.getElementById('createCourseDescription').value,
-                    resources
+                    name: document.getElementById('createCourseName').value, category: document.getElementById('createCourseCategory').value,
+                    color: document.getElementById('createCourseColor').value, duration: parseInt(document.getElementById('createCourseDuration').value),
+                    description: document.getElementById('createCourseDescription').value, resources
                 });
-                closeModal('createCourseModal');
-                showToast('✅ Curso creado');
-                loadCourses();
-                loadCoursesForSelect();
+                closeModal('createCourseModal'); showToast('✅ Curso creado'); loadCourses(); loadCoursesForSelect();
             } catch (error) { console.error("Error creando curso:", error); }
         }
-        
+
         async function showEditCourseModal(courseId) {
             try {
                 const docSnap = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
                 if (!docSnap.exists()) return;
                 const course = docSnap.data();
-
                 document.getElementById('editCourseId').value = courseId;
                 document.getElementById('editCourseName').value = course.name;
                 document.getElementById('editCourseCategory').value = course.category;
                 document.getElementById('editCourseColor').value = course.color;
                 document.getElementById('editCourseDuration').value = course.duration;
                 document.getElementById('editCourseDescription').value = course.description;
-
                 const container = document.getElementById('editResourcesContainer');
                 container.innerHTML = '';
                 editResourceCounter = 0;
-                (course.resources || []).forEach(r => addEditResourceField(r.name, r.url, r.icon, r.isWebex));
-
+                (course.resources || []).forEach(r => addResourceField('edit', r.name, r.url, r.icon, r.isWebex));
                 openModal('editCourseModal');
             } catch (error) { console.error("Error cargando curso para editar:", error); }
         }
@@ -1714,66 +1586,34 @@
         async function updateCourse(e) {
             e.preventDefault();
             const courseId = document.getElementById('editCourseId').value;
-            
             const resources = [];
-            document.querySelectorAll('#editResourcesContainer .resource-item').forEach((item, i) => {
-                const name = item.querySelector(`[data-edit-name="${i}"]`).value;
-                const url = item.querySelector(`[data-edit-url="${i}"]`).value;
-                const icon = item.querySelector(`[data-edit-icon="${i}"]`).value;
-                const isWebex = item.querySelector(`[data-edit-webex="${i}"]`).checked;
-                if (name && url) {
-                    resources.push({ name, url, icon, isWebex });
-                }
+            document.querySelectorAll('#editResourcesContainer .resource-item').forEach(item => {
+                const name = item.querySelector('input[data-edit-name]').value;
+                const url = item.querySelector('input[data-edit-url]').value;
+                if (name && url) resources.push({ name, url, icon: item.querySelector('select').value, isWebex: item.querySelector('input[type="checkbox"]').checked });
             });
-
             try {
                 await window.firestore.updateDoc(window.firestore.doc(db, 'courses', courseId), {
-                    name: document.getElementById('editCourseName').value,
-                    category: document.getElementById('editCourseCategory').value,
-                    color: document.getElementById('editCourseColor').value,
-                    duration: parseInt(document.getElementById('editCourseDuration').value),
-                    description: document.getElementById('editCourseDescription').value,
-                    resources
+                    name: document.getElementById('editCourseName').value, category: document.getElementById('editCourseCategory').value,
+                    color: document.getElementById('editCourseColor').value, duration: parseInt(document.getElementById('editCourseDuration').value),
+                    description: document.getElementById('editCourseDescription').value, resources
                 });
-                closeModal('editCourseModal');
-                showToast('✅ Curso actualizado');
-                loadCourses();
+                closeModal('editCourseModal'); showToast('✅ Curso actualizado'); loadCourses();
             } catch (error) { console.error("Error actualizando curso:", error); }
         }
-        
+
         async function deleteCourse(courseId) {
             if (!confirm('¿Seguro?')) return;
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId));
-                showToast('✅ Curso eliminado');
-                loadCourses();
-                loadCoursesForSelect();
+                showToast('✅ Curso eliminado'); loadCourses(); loadCoursesForSelect();
             } catch (error) { console.error("Error eliminando:", error); }
         }
-        
+
         function addResourceField(type) {
             const container = document.getElementById(`${type}ResourcesContainer`);
             const counter = type === 'create' ? createResourceCounter++ : editResourceCounter++;
-            
-            container.insertAdjacentHTML('beforeend', `
-                <div class="resource-item" id="${type}-resource-${counter}">
-                    <div class="resource-item-header">
-                        <strong>Recurso ${counter + 1}</strong>
-                        <button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button>
-                    </div>
-                    <div style="display: grid; gap: 10px;">
-                        <input type="text" class="form-input" placeholder="Nombre" data-${type}-name="${counter}">
-                        <input type="url" class="form-input" placeholder="https://..." data-${type}-url="${counter}">
-                        <select class="form-input" data-${type}-icon="${counter}">
-                            <option value="📄">📄 Documento</option>
-                            <option value="📹">📹 Video</option>
-                            <option value="💻">💻 Código</option>
-                            <option value="📝">📝 Plantilla</option>
-                            <option value="🎨">🎨 Diseño</option>
-                        </select>
-                        <label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex="${counter}">Es Cisco Webex</label>
-                    </div>
-                </div>`);
+            container.insertAdjacentHTML('beforeend', `<div class="resource-item" id="${type}-resource-${counter}"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄">📄 Doc</option><option value="📹">📹 Video</option><option value="💻">💻 Código</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex>Es Webex</label></div></div>`);
         }
 
         // Helpers
