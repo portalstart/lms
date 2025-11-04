@@ -1424,14 +1424,18 @@
             }
         }
 
-        async function handleLogout() {
-            try {
-                await window.firebaseAuth.signOut(auth);
-                showToast('Sesión cerrada');
-            } catch (error) {
-                console.error("Error logout:", error);
+       async function handleLogout() {
+                try {
+                    await window.firebaseAuth.signOut(auth);
+                    showToast('Sesión cerrada');
+                    // Refresh después de cerrar sesión
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                } catch (error) {
+                    console.error("Error logout:", error);
+                }
             }
-        }
 
         async function initApp() {
             console.log("🚀 Iniciando app...");
@@ -1863,6 +1867,7 @@
     </script>
 </body>
 </html>
+
 
 
 
