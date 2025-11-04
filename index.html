@@ -609,6 +609,60 @@
             background: #fffbeb;
         }
 
+        /* Tasks */
+        .task-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .task-course {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .task-due {
+            text-align: right;
+        }
+
+        .task-date {
+            font-size: 12px;
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .task-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -948,7 +1002,17 @@
                     </div>
 
                     <div id="assignmentsTab" class="tab-content" style="display: none;">
-                        <div class="loading"><p>Sección de tareas</p></div>
+                        <div class="course-count">
+                            <span>📝 <strong id="taskCount">0</strong> tareas</span>
+                            <button class="btn btn-success teacher-only" style="padding: 8px 16px;" onclick="openModal('createTaskModal')">
+                                ➕ Crear Tarea
+                            </button>
+                        </div>
+                        <div id="tasksLoading" class="loading">
+                            <div class="spinner"></div>
+                            <p>Cargando tareas...</p>
+                        </div>
+                        <div id="tasksList"></div>
                     </div>
 
                     <div id="studentsTab" class="tab-content" style="display: none;">
@@ -968,7 +1032,7 @@
                         <h3 style="color: white; margin-bottom: 15px;">⚡ Estadísticas</h3>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <span>Tareas Pendientes:</span>
-                            <strong>0</strong>
+                            <strong id="pendingTasks">0</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <span>Racha:</span>
@@ -990,7 +1054,7 @@
             <p style="margin-bottom: 20px; color: #6b7280;">Ingresa la contraseña de profesor (5686)</p>
             <div class="form-group">
                 <label class="form-label">Contraseña</label>
-                <input type="password" class="form-input" id="passwordInput" placeholder="****">
+                <input type="password" class="form-input" id="passwordInput" placeholder="5686">
                 <p class="password-error" id="passwordError">❌ Contraseña incorrecta</p>
             </div>
             <div style="display: flex; gap: 10px;">
@@ -1001,6 +1065,48 @@
                     Verificar
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Task -->
+    <div id="createTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📝 Crear Nueva Tarea</h2>
+                <button class="close-modal" onclick="closeModal('createTaskModal')">&times;</button>
+            </div>
+            <form onsubmit="createTask(event)">
+                <div class="form-group">
+                    <label class="form-label">Título de la Tarea</label>
+                    <input type="text" class="form-input" id="taskTitle" required placeholder="Ej: Trabajo de investigación">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Curso</label>
+                    <select class="form-input" id="taskCourse" required>
+                        <option value="">Selecciona un curso</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-input" id="taskDescription" rows="4" required placeholder="Describe la tarea..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha de Entrega</label>
+                    <input type="datetime-local" class="form-input" id="taskDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Puntos</label>
+                    <input type="number" class="form-input" id="taskPoints" required min="0" value="100">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('createTaskModal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" style="flex: 1;">
+                        Crear Tarea
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1139,7 +1245,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAfiWPOjZZFG07gOQGVGkwWSVlqnpz0zmY",
@@ -1158,7 +1264,7 @@
         window.auth = auth;
         window.db = db;
         window.firebaseAuth = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
-        window.firestore = { collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy };
+        window.firestore = { collection, addDoc, getDocs, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot, where, Timestamp };
 
         console.log("✅ Firebase inicializado");
 
@@ -1177,6 +1283,7 @@
                         
                         showMainApp();
                         await initApp();
+                        startRealTimeUpdates();
                     } else {
                         console.error("❌ Documento de usuario no encontrado");
                         await signOut(auth);
@@ -1217,7 +1324,7 @@
                         ]
                     },
                     {
-                        name: "🤖 Automatización con n8n ",
+                        name: "🤖 Automatización con n8n",
                         category: "automation",
                         color: "automation",
                         duration: 8,
@@ -1318,6 +1425,24 @@
             }
         };
 
+        // Actualizaciones en tiempo real
+        function startRealTimeUpdates() {
+            // Actualizar leaderboard en tiempo real
+            const usersQuery = query(collection(db, 'users'), orderBy('points', 'desc'));
+            onSnapshot(usersQuery, (snapshot) => {
+                window.updateLeaderboard(snapshot);
+            });
+
+            // Actualizar tareas en tiempo real
+            const tasksQuery = query(collection(db, 'tasks'), orderBy('dueDate', 'asc'));
+            onSnapshot(tasksQuery, (snapshot) => {
+                window.updateTasks(snapshot);
+            });
+
+            // Actualizar racha diaria
+            window.updateStreak();
+        }
+
         setTimeout(() => {
             initDefaultCourses();
         }, 2000);
@@ -1407,6 +1532,7 @@
                     completedCourses: 0,
                     averageGrade: 0,
                     streak: 0,
+                    lastActivity: new Date().toISOString(),
                     createdAt: new Date().toISOString()
                 });
 
@@ -1424,24 +1550,24 @@
             }
         }
 
-       async function handleLogout() {
-                try {
-                    await window.firebaseAuth.signOut(auth);
-                    showToast('Sesión cerrada');
-                    // Refresh después de cerrar sesión
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                } catch (error) {
-                    console.error("Error logout:", error);
-                }
+        async function handleLogout() {
+            try {
+                await window.firebaseAuth.signOut(auth);
+                showToast('Sesión cerrada');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            } catch (error) {
+                console.error("Error logout:", error);
             }
+        }
 
         async function initApp() {
             console.log("🚀 Iniciando app...");
             updateUI();
             await loadCourses();
-            await loadLeaderboard();
+            await loadTasks();
+            await loadCoursesForSelect();
         }
 
         function updateUI() {
@@ -1473,6 +1599,66 @@
             }
         }
 
+        // Actualizar leaderboard en tiempo real
+        window.updateLeaderboard = function(snapshot) {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+
+            let rank = 1;
+            snapshot.forEach((doc) => {
+                const user = doc.data();
+                list.innerHTML += `
+                    <div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
+                        <strong>#${rank} ${user.firstName} ${user.lastName}</strong>
+                        <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
+                    </div>
+                `;
+                rank++;
+            });
+        };
+
+        // Actualizar racha
+        window.updateStreak = async function() {
+            if (!window.currentUser) return;
+
+            try {
+                const userRef = window.firestore.doc(db, 'users', window.currentUser.uid);
+                const userDoc = await window.firestore.getDoc(userRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const lastActivity = userData.lastActivity ? new Date(userData.lastActivity) : null;
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (lastActivity) {
+                        const lastDate = new Date(lastActivity);
+                        lastDate.setHours(0, 0, 0, 0);
+                        const daysDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+
+                        let newStreak = userData.streak || 0;
+
+                        if (daysDiff === 1) {
+                            // Día consecutivo
+                            newStreak++;
+                        } else if (daysDiff > 1) {
+                            // Se rompió la racha
+                            newStreak = 1;
+                        }
+
+                        await window.firestore.updateDoc(userRef, {
+                            streak: newStreak,
+                            lastActivity: new Date().toISOString()
+                        });
+
+                        document.getElementById('currentStreak').textContent = `${newStreak} días 🔥`;
+                    }
+                }
+            } catch (error) {
+                console.error("Error actualizando racha:", error);
+            }
+        };
+
         async function loadCourses() {
             try {
                 console.log("📚 Cargando cursos...");
@@ -1495,6 +1681,21 @@
                 document.getElementById('courseCount').textContent = snapshot.size;
                 
                 console.log(`✅ ${snapshot.size} cursos cargados`);
+            } catch (error) {
+                console.error("Error cargando cursos:", error);
+            }
+        }
+
+        async function loadCoursesForSelect() {
+            try {
+                const snapshot = await window.firestore.getDocs(window.firestore.collection(db, 'courses'));
+                const select = document.getElementById('taskCourse');
+                select.innerHTML = '<option value="">Selecciona un curso</option>';
+
+                snapshot.forEach((doc) => {
+                    const course = doc.data();
+                    select.innerHTML += `<option value="${doc.id}">${course.name}</option>`;
+                });
             } catch (error) {
                 console.error("Error cargando cursos:", error);
             }
@@ -1536,30 +1737,158 @@
             `;
         }
 
-        async function loadLeaderboard() {
+        // TAREAS
+        async function createTask(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('taskTitle').value;
+            const courseId = document.getElementById('taskCourse').value;
+            const description = document.getElementById('taskDescription').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+            const points = parseInt(document.getElementById('taskPoints').value);
+
             try {
-                const q = window.firestore.query(
-                    window.firestore.collection(db, 'users'),
-                    window.firestore.orderBy('points', 'desc')
+                // Obtener nombre del curso
+                const courseDoc = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
+                const courseName = courseDoc.exists() ? courseDoc.data().name : 'Curso';
+
+                await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), {
+                    title,
+                    courseId,
+                    courseName,
+                    description,
+                    dueDate: new Date(dueDate).toISOString(),
+                    points,
+                    createdBy: window.currentUser.uid,
+                    createdAt: new Date().toISOString()
+                });
+
+                closeModal('createTaskModal');
+                showToast('✅ Tarea creada exitosamente');
+                e.target.reset();
+                await loadTasks();
+            } catch (error) {
+                console.error("Error creando tarea:", error);
+                showToast('Error al crear tarea');
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const snapshot = await window.firestore.getDocs(
+                    window.firestore.query(
+                        window.firestore.collection(db, 'tasks'),
+                        window.firestore.orderBy('dueDate', 'asc')
+                    )
                 );
-                const snapshot = await window.firestore.getDocs(q);
                 
-                const list = document.getElementById('leaderboardList');
+                const list = document.getElementById('tasksList');
                 list.innerHTML = '';
 
-                let rank = 1;
+                if (snapshot.empty) {
+                    document.getElementById('tasksLoading').innerHTML = '<p style="text-align: center; color: #6b7280;">No hay tareas asignadas</p>';
+                    document.getElementById('taskCount').textContent = '0';
+                    document.getElementById('pendingTasks').textContent = '0';
+                    return;
+                }
+
+                let pendingCount = 0;
                 snapshot.forEach((doc) => {
-                    const user = doc.data();
-                    list.innerHTML += `
-                        <div style="padding: 10px; background: var(--light); border-radius: 8px; margin-bottom: 8px;">
-                            <strong>#${rank} ${user.firstName} ${user.lastName}</strong>
-                            <div style="font-size: 12px; color: #6b7280;">${user.points || 0} pts • Nivel ${user.level || 1}</div>
-                        </div>
-                    `;
-                    rank++;
+                    const task = { id: doc.id, ...doc.data() };
+                    list.innerHTML += createTaskCard(task);
+                    
+                    // Contar tareas pendientes
+                    if (new Date(task.dueDate) > new Date()) {
+                        pendingCount++;
+                    }
                 });
+
+                document.getElementById('tasksLoading').style.display = 'none';
+                document.getElementById('taskCount').textContent = snapshot.size;
+                document.getElementById('pendingTasks').textContent = pendingCount;
             } catch (error) {
-                console.error("Error leaderboard:", error);
+                console.error("Error cargando tareas:", error);
+            }
+        }
+
+        // Actualizar tareas en tiempo real
+        window.updateTasks = function(snapshot) {
+            const list = document.getElementById('tasksList');
+            list.innerHTML = '';
+
+            if (snapshot.empty) {
+                list.innerHTML = '<p style="text-align: center; color: #6b7280;">No hay tareas asignadas</p>';
+                document.getElementById('taskCount').textContent = '0';
+                document.getElementById('pendingTasks').textContent = '0';
+                return;
+            }
+
+            let pendingCount = 0;
+            snapshot.forEach((doc) => {
+                const task = { id: doc.id, ...doc.data() };
+                list.innerHTML += createTaskCard(task);
+                
+                if (new Date(task.dueDate) > new Date()) {
+                    pendingCount++;
+                }
+            });
+
+            document.getElementById('taskCount').textContent = snapshot.size;
+            document.getElementById('pendingTasks').textContent = pendingCount;
+        };
+
+        function createTaskCard(task) {
+            const dueDate = new Date(task.dueDate);
+            const isOverdue = dueDate < new Date();
+            const formattedDate = dueDate.toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const isTeacher = window.currentUserData && window.currentUserData.role === 'teacher';
+
+            return `
+                <div class="task-card">
+                    ${isTeacher ? `
+                        <div class="task-actions">
+                            <button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar tarea">🗑️</button>
+                        </div>
+                    ` : ''}
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-course">${task.courseName}</div>
+                        </div>
+                        <div class="task-due">
+                            <div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">
+                                ${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}
+                            </div>
+                            <div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">
+                                ${task.points} puntos
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-description">${task.description}</div>
+                    <a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">
+                        📤 Entregar Tarea
+                    </a>
+                </div>
+            `;
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
+
+            try {
+                await window.firestore.deleteDoc(window.firestore.doc(db, 'tasks', taskId));
+                showToast('✅ Tarea eliminada');
+                await loadTasks();
+            } catch (error) {
+                console.error("Error eliminando tarea:", error);
+                showToast('Error al eliminar tarea');
             }
         }
 
@@ -1631,6 +1960,7 @@
                 closeModal('createCourseModal');
                 showToast('✅ Curso creado exitosamente');
                 await loadCourses();
+                await loadCoursesForSelect();
                 e.target.reset();
                 document.getElementById('createResourcesContainer').innerHTML = '';
                 createResourceCounter = 0;
@@ -1772,6 +2102,7 @@
                 closeModal('editCourseModal');
                 showToast('✅ Curso actualizado');
                 await loadCourses();
+                await loadCoursesForSelect();
             } catch (error) {
                 console.error("Error actualizando:", error);
                 showToast('Error al actualizar');
@@ -1779,10 +2110,13 @@
         }
 
         async function deleteCourse(courseId) {
+            if (!confirm('¿Estás seguro de eliminar este curso?')) return;
+
             try {
                 await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId));
                 showToast('✅ Curso eliminado');
                 await loadCourses();
+                await loadCoursesForSelect();
             } catch (error) {
                 console.error("Error eliminando:", error);
                 showToast('Error al eliminar');
@@ -1867,7 +2201,3 @@
     </script>
 </body>
 </html>
-
-
-
-
