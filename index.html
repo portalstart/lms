@@ -1000,12 +1000,11 @@
         });
 
         window.initDefaultCourses = async () => {
-            try {
-                const coursesSnap = await getDocs(collection(db, 'courses'));
-                if (!coursesSnap.empty) return;
-            } catch(e) { /* ignore */ }
+            const coursesRef = collection(db, 'courses');
+            const coursesSnap = await getDocs(coursesRef);
+            if (!coursesSnap.empty) return;
             const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
-            for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
+            for (const course of courses) { await addDoc(coursesRef, course); }
         };
 
         function startRealTimeUpdates() {
@@ -1205,7 +1204,7 @@
             document.querySelectorAll('#createResourcesContainer .resource-item').forEach(item => {
                 const name = item.querySelector('[data-create-name]').value;
                 const url = item.querySelector('[data-create-url]').value;
-                if (name && url) resources.push({ name, url, icon: item.querySelector('select').value, isWebex: item.querySelector('input[type="checkbox"]').checked });
+                if (name && url) resources.push({ name, url, icon: item.querySelector('[data-create-icon]').value, isWebex: item.querySelector('[data-create-webex]').checked });
             });
             try {
                 await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
@@ -1260,10 +1259,10 @@
             try { await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId)); showToast('✅ Curso eliminado'); await loadCourses(); await loadCoursesForSelect(); } catch (error) { console.error("Error eliminando:", error); }
         }
         
-        function addResourceField(type) {
+        function addResourceField(type, name = '', url = '', icon = '📄', isWebex = false) {
             const container = document.getElementById(`${type}ResourcesContainer`);
             const counter = type === 'create' ? createResourceCounter++ : editResourceCounter++;
-            container.insertAdjacentHTML('beforeend', `<div class="resource-item"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄">📄 Doc</option><option value="📹">📹 Video</option><option value="💻">💻 Código</option><option value="📝">📝 Plantilla</option><option value="🎨">🎨 Diseño</option><option value="🎮">🎮 Ejercicio</option><option value="▶️">▶️ YouTube</option><option value="☁️">☁️ Carpeta/Nube</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex>Es Webex</label></div></div>`);
+            container.insertAdjacentHTML('beforeend', `<div class="resource-item" id="${type}-resource-${counter}"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" value="${name}" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" value="${url}" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Doc</option><option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option><option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option><option value="📝" ${icon === '📝' ? 'selected' : ''}>📝 Plantilla</option><option value="🎨" ${icon === '🎨' ? 'selected' : ''}>🎨 Diseño</option><option value="🎮" ${icon === '🎮' ? 'selected' : ''}>🎮 Ejercicio</option><option value="▶️" ${icon === '▶️' ? 'selected' : ''}>▶️ YouTube</option><option value="☁️" ${icon === '☁️' ? 'selected' : ''}>☁️ Carpeta/Nube</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex ${isWebex ? 'checked' : ''}>Es Webex</label></div></div>`);
         }
 
         function filterCourses() {
