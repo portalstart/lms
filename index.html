@@ -910,7 +910,7 @@
             <div class="main-content">
                 <div>
                     <div class="tabs"><button class="tab-btn active" onclick="switchTab('courses')">📚 Cursos</button><button class="tab-btn" onclick="switchTab('assignments')">📝 Tareas</button><button class="tab-btn teacher-only" onclick="switchTab('students')">👥 Estudiantes</button></div>
-                    <div id="coursesTab" class="tab-content"><div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()"><select class="filter-select" id="filterSelect" onchange="filterCourses()"><option value="all">Todos</option><option value="programming">Programación</option><option value="apps">Apps</option><option value="creativity">Creatividad</option><option value="automation">Automatización</option><option value="academic">Académico</option></select></div><div class="course-count"><span class="teacher-only">📚 <strong id="courseCount">0</strong> cursos</span><button class="btn btn-primary teacher-only" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">➕ Nuevo Curso</button></div><div id="coursesLoading" class="loading"><div class="spinner"></div><p>Cargando cursos...</p></div><div class="courses-grid" id="coursesGrid"></div></div>
+                    <div id="coursesTab" class="tab-content"><div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar cursos..." onkeyup="filterCourses()"><select class="filter-select" id="filterSelect" onchange="filterCourses()"><option value="all">Todos</option><option value="programming">Programación</option><option value="apps">Apps</option><option value="creativity">Creatividad</option><option value="automation">Automatización</option><option value="academic">Académico</option></select></div><div class="course-count"><span>📚 <strong id="courseCount">0</strong> cursos</span><button class="btn btn-primary teacher-only" style="padding: 8px 16px;" onclick="openModal('createCourseModal')">➕ Nuevo Curso</button></div><div id="coursesLoading" class="loading"><div class="spinner"></div><p>Cargando cursos...</p></div><div class="courses-grid" id="coursesGrid"></div></div>
                     <div id="assignmentsTab" class="tab-content" style="display: none;">
                         <div class="search-bar">
                             <select class="filter-select" id="taskGradeFilter" onchange="filterTasks()">
@@ -995,11 +995,12 @@
         });
 
         window.initDefaultCourses = async () => {
-            const coursesRef = collection(db, 'courses');
-            const coursesSnap = await getDocs(coursesRef);
-            if (!coursesSnap.empty) return;
+            try {
+                const coursesSnap = await getDocs(collection(db, 'courses'));
+                if (!coursesSnap.empty) return;
+            } catch(e) { /* ignore */ }
             const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
-            for (const course of courses) { await addDoc(coursesRef, course); }
+            for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
         };
 
         function startRealTimeUpdates() {
@@ -1018,6 +1019,8 @@
 
         let pendingAction = null;
         let pendingCourseId = null;
+        let createResourceCounter = 0;
+        let editResourceCounter = 0;
         let quill;
 
         function showAuthScreen() { document.getElementById('authContainer').style.display = 'flex'; document.getElementById('mainApp').classList.remove('show'); }
@@ -1252,10 +1255,10 @@
             try { await window.firestore.deleteDoc(window.firestore.doc(db, 'courses', courseId)); showToast('✅ Curso eliminado'); await loadCourses(); await loadCoursesForSelect(); } catch (error) { console.error("Error eliminando:", error); }
         }
         
-        function addResourceField(type) {
+        function addResourceField(type, name = '', url = '', icon = '📄', isWebex = false) {
             const container = document.getElementById(`${type}ResourcesContainer`);
             const counter = type === 'create' ? createResourceCounter++ : editResourceCounter++;
-            container.insertAdjacentHTML('beforeend', `<div class="resource-item"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄">📄 Doc</option><option value="📹">📹 Video</option><option value="💻">💻 Código</option><option value="📝">📝 Plantilla</option><option value="🎨">🎨 Diseño</option><option value="🎮">🎮 Ejercicio</option><option value="▶️">▶️ YouTube</option><option value="☁️">☁️ Carpeta/Nube</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex>Es Webex</label></div></div>`);
+            container.insertAdjacentHTML('beforeend', `<div class="resource-item"><div class="resource-item-header"><strong>Recurso ${counter + 1}</strong><button type="button" class="remove-resource" onclick="this.parentElement.parentElement.remove()">🗑️</button></div><div style="display: grid; gap: 10px;"><input type="text" value="${name}" class="form-input" placeholder="Nombre" data-${type}-name><input type="url" value="${url}" class="form-input" placeholder="https://..." data-${type}-url><select class="form-input" data-${type}-icon><option value="📄" ${icon === '📄' ? 'selected' : ''}>📄 Doc</option><option value="📹" ${icon === '📹' ? 'selected' : ''}>📹 Video</option><option value="💻" ${icon === '💻' ? 'selected' : ''}>💻 Código</option><option value="📝" ${icon === '📝' ? 'selected' : ''}>📝 Plantilla</option><option value="🎨" ${icon === '🎨' ? 'selected' : ''}>🎨 Diseño</option><option value="🎮" ${icon === '🎮' ? 'selected' : ''}>🎮 Ejercicio</option><option value="▶️" ${icon === '▶️' ? 'selected' : ''}>▶️ YouTube</option><option value="☁️" ${icon === '☁️' ? 'selected' : ''}>☁️ Carpeta/Nube</option></select><label style="display: flex; gap: 10px;"><input type="checkbox" data-${type}-webex ${isWebex ? 'checked' : ''}>Es Webex</label></div></div>`);
         }
 
         function filterCourses() {
@@ -1270,7 +1273,7 @@
         
         function filterTasks() {
             const filter = document.getElementById('taskGradeFilter').value;
-            document.querySelectorAll('.task-card').forEach(card => {
+            document.querySelectorAll('#tasksList .task-card').forEach(card => {
                 const grade = card.getAttribute('data-grade');
                 card.style.display = (filter === 'all' || grade === filter) ? 'block' : 'none';
             });
