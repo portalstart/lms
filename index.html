@@ -922,6 +922,17 @@
                         <div class="courses-grid" id="coursesGrid"></div>
                     </div>
                     <div id="assignmentsTab" class="tab-content" style="display: none;">
+                        <div class="search-bar">
+                            <select class="filter-select" id="taskGradeFilter" onchange="filterTasks()">
+                                <option value="all">Todos los Grados</option>
+                                <option value="7">7° Grado</option>
+                                <option value="8">8° Grado</option>
+                                <option value="9">9° Grado</option>
+                                <option value="10">10° Grado</option>
+                                <option value="11">11° Grado</option>
+                                <option value="12">12° Grado</option>
+                            </select>
+                        </div>
                         <div class="course-count">
                             <span>📝 <strong id="taskCount">0</strong> tareas</span>
                             <button class="btn btn-success teacher-only" style="padding: 8px 16px;" onclick="openModal('createTaskModal')">
@@ -940,7 +951,7 @@
 
     <!-- Modals -->
     <div id="passwordModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">🔒 Verificación de Seguridad</h2><button class="close-modal" onclick="closeModal('passwordModal')">&times;</button></div><p style="margin-bottom: 20px; color: #6b7280;">Ingresa la contraseña de profesor</p><div class="form-group"><label class="form-label">Contraseña</label><input type="password" class="form-input" id="passwordInput" placeholder="••••••••"><p class="password-error" id="passwordError">❌ Contraseña incorrecta</p></div><div style="display: flex; gap: 10px;"><button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('passwordModal')">Cancelar</button><button type="button" class="btn btn-primary" style="flex: 1;" onclick="verifyPassword()">Verificar</button></div></div></div>
-    <div id="createTaskModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">📝 Crear Nueva Tarea</h2><button class="close-modal" onclick="closeModal('createTaskModal')">&times;</button></div><form onsubmit="createTask(event)"><div class="form-group"><label class="form-label">Título</label><input type="text" class="form-input" id="taskTitle" required></div><div class="form-group"><label class="form-label">Curso</label><select class="form-input" id="taskCourse" required><option value="">Selecciona un curso</option></select></div><div class="form-group"><label class="form-label">Descripción</label><div id="editor-container"></div></div><div class="form-group"><label class="form-label">Fecha Límite</label><input type="datetime-local" class="form-input" id="taskDueDate" required></div><div class="form-group"><label class="form-label">Puntos</label><input type="number" class="form-input" id="taskPoints" required min="0" value="100"></div><div style="display: flex; gap: 10px; margin-top: 20px;"><button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('createTaskModal')">Cancelar</button><button type="submit" class="btn btn-success" style="flex: 1;">Crear Tarea</button></div></form></div></div>
+    <div id="createTaskModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">📝 Crear Nueva Tarea</h2><button class="close-modal" onclick="closeModal('createTaskModal')">&times;</button></div><form onsubmit="createTask(event)"><div class="form-group"><label class="form-label">Título</label><input type="text" class="form-input" id="taskTitle" required></div><div class="form-group"><label class="form-label">Curso</label><select class="form-input" id="taskCourse" required><option value="">Selecciona un curso</option></select></div><div class="form-group"><label class="form-label">Grado</label><select class="form-input" id="taskGrade" required><option value="">Selecciona un grado</option><option value="7">7° Grado</option><option value="8">8° Grado</option><option value="9">9° Grado</option><option value="10">10° Grado</option><option value="11">11° Grado</option><option value="12">12° Grado</option></select></div><div class="form-group"><label class="form-label">Descripción</label><div id="editor-container"></div></div><div class="form-group"><label class="form-label">Fecha Límite</label><input type="datetime-local" class="form-input" id="taskDueDate" required></div><div class="form-group"><label class="form-label">Puntos</label><input type="number" class="form-input" id="taskPoints" required min="0" value="100"></div><div style="display: flex; gap: 10px; margin-top: 20px;"><button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('createTaskModal')">Cancelar</button><button type="submit" class="btn btn-success" style="flex: 1;">Crear Tarea</button></div></form></div></div>
     <div id="createCourseModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">➕ Crear Curso</h2><button class="close-modal" onclick="closeModal('createCourseModal')">&times;</button></div><form onsubmit="createCourse(event)"><div class="form-group"><label class="form-label">Nombre</label><input type="text" class="form-input" id="createCourseName" required></div><div class="form-group"><label class="form-label">Categoría</label><select class="form-input" id="createCourseCategory" required><option value="programming">Programación</option><option value="apps">Apps</option><option value="creativity">Creatividad</option><option value="automation">Automatización</option><option value="academic">Académico</option></select></div><div class="form-group"><label class="form-label">Color</label><select class="form-input" id="createCourseColor" required><option value="grade-10">Rojo</option><option value="automation">Morado</option><option value="innovation">Naranja</option><option value="creativity">Rosa</option><option value="app-inventor">Verde</option><option value="programming">Azul</option><option value="animation">Cyan</option><option value="security">Índigo</option><option value="computational">Turquesa</option></select></div><div class="form-group"><label class="form-label">Duración (semanas)</label><input type="number" class="form-input" id="createCourseDuration" required min="1" value="8"></div><div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input" id="createCourseDescription" rows="3" required></textarea></div><div class="form-group"><label class="form-label">📎 Recursos</label><div id="createResourcesContainer"></div><button type="button" class="add-resource-btn" onclick="addResourceField('create')">➕ Agregar Recurso</button></div><div style="display: flex; gap: 10px; margin-top: 20px;"><button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('createCourseModal')">Cancelar</button><button type="submit" class="btn btn-primary" style="flex: 1;">Crear Curso</button></div></form></div></div>
     <div id="editCourseModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">✏️ Editar Curso</h2><button class="close-modal" onclick="closeModal('editCourseModal')">&times;</button></div><form onsubmit="updateCourse(event)"><input type="hidden" id="editCourseId"><div class="form-group"><label class="form-label">Nombre</label><input type="text" class="form-input" id="editCourseName" required></div><div class="form-group"><label class="form-label">Categoría</label><select class="form-input" id="editCourseCategory" required><option value="programming">Programación</option><option value="apps">Apps</option><option value="creativity">Creatividad</option><option value="automation">Automatización</option><option value="academic">Académico</option></select></div><div class="form-group"><label class="form-label">Color</label><select class="form-input" id="editCourseColor" required><option value="grade-10">Rojo</option><option value="automation">Morado</option><option value="innovation">Naranja</option><option value="creativity">Rosa</option><option value="app-inventor">Verde</option><option value="programming">Azul</option><option value="animation">Cyan</option><option value="security">Índigo</option><option value="computational">Turquesa</option></select></div><div class="form-group"><label class="form-label">Duración (semanas)</label><input type="number" class="form-input" id="editCourseDuration" required min="1"></div><div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input" id="editCourseDescription" rows="3" required></textarea></div><div class="form-group"><label class="form-label">📎 Recursos</label><div id="editResourcesContainer"></div><button type="button" class="add-resource-btn" onclick="addResourceField('edit')">➕ Agregar Recurso</button></div><div style="display: flex; gap: 10px; margin-top: 20px;"><button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('editCourseModal')">Cancelar</button><button type="submit" class="btn btn-primary" style="flex: 1;">💾 Guardar Cambios</button></div></form></div></div>
 
@@ -989,11 +1000,12 @@
         });
 
         window.initDefaultCourses = async () => {
-            const coursesRef = collection(db, 'courses');
-            const coursesSnap = await getDocs(coursesRef);
-            if (!coursesSnap.empty) return;
+            try {
+                const coursesSnap = await getDocs(collection(db, 'courses'));
+                if (!coursesSnap.empty) return;
+            } catch(e) { /* ignore */ }
             const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
-            for (const course of courses) { await addDoc(coursesRef, course); }
+            for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
         };
 
         function startRealTimeUpdates() {
@@ -1122,13 +1134,14 @@
             e.preventDefault();
             const title = document.getElementById('taskTitle').value;
             const courseId = document.getElementById('taskCourse').value;
+            const grade = document.getElementById('taskGrade').value;
             const descriptionHTML = quill.root.innerHTML;
             const dueDate = document.getElementById('taskDueDate').value;
             const points = parseInt(document.getElementById('taskPoints').value);
             try {
                 const courseDoc = await window.firestore.getDoc(window.firestore.doc(db, 'courses', courseId));
                 const courseName = courseDoc.exists() ? courseDoc.data().name : 'Curso General';
-                await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), { title, courseId, courseName, description: descriptionHTML, dueDate: new Date(dueDate).toISOString(), points, createdBy: window.currentUser.uid, createdAt: new Date().toISOString() });
+                await window.firestore.addDoc(window.firestore.collection(db, 'tasks'), { title, courseId, courseName, grade, description: descriptionHTML, dueDate: new Date(dueDate).toISOString(), points, createdBy: window.currentUser.uid, createdAt: new Date().toISOString() });
                 closeModal('createTaskModal'); showToast('✅ Tarea creada'); e.target.reset(); quill.root.innerHTML = '';
             } catch (error) { console.error("Error creando tarea:", error); showToast('Error al crear tarea'); }
         }
@@ -1145,6 +1158,7 @@
                 if (new Date(task.dueDate) > new Date() && !completedTasks.includes(task.id)) pendingCount++;
             });
             document.getElementById('taskCount').textContent = snapshot.size; document.getElementById('pendingTasks').textContent = pendingCount;
+            filterTasks();
         };
 
         function createTaskCard(task) {
@@ -1153,7 +1167,7 @@
             const formattedDate = dueDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             const completedTasks = window.currentUserData.completedTasks || [];
             const isCompleted = completedTasks.includes(task.id);
-            return `<div class="task-card ${isCompleted ? 'completed' : ''}"><div class="task-actions"><button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar">🗑️</button></div><div class="task-header"><div><div class="task-title">${task.title}</div><div class="task-course">${task.courseName}</div></div><div class="task-due"><div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}</div><div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">${task.points} pts</div></div></div><div class="task-description">${task.description}</div><div class="task-footer"><a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">📤 Enviar</a><label class="task-complete-label"><input type="checkbox" onchange="toggleTaskComplete('${task.id}', ${task.points}, this.checked)" ${isCompleted ? 'checked' : ''}>${isCompleted ? '✅ Completada' : 'Marcar completada'}</label></div></div>`;
+            return `<div class="task-card ${isCompleted ? 'completed' : ''}" data-grade="${task.grade}"><div class="task-actions"><button class="action-btn delete" onclick="deleteTask('${task.id}')" title="Eliminar">🗑️</button></div><div class="task-header"><div><div class="task-title">${task.title}</div><div class="task-course">${task.courseName} - ${task.grade}° Grado</div></div><div class="task-due"><div class="task-date" style="color: ${isOverdue ? 'var(--danger)' : 'var(--success)'}">${isOverdue ? '⚠️ Vencida' : '⏰'} ${formattedDate}</div><div style="font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 5px;">${task.points} pts</div></div></div><div class="task-description">${task.description}</div><div class="task-footer"><a href="${HOMEWORK_URL}" class="btn btn-primary" target="_blank">📤 Enviar</a><label class="task-complete-label"><input type="checkbox" onchange="toggleTaskComplete('${task.id}', ${task.points}, this.checked)" ${isCompleted ? 'checked' : ''}>${isCompleted ? '✅ Completada' : 'Marcar completada'}</label></div></div>`;
         }
 
         async function toggleTaskComplete(taskId, points, isCompleted) {
@@ -1191,7 +1205,7 @@
             document.querySelectorAll('#createResourcesContainer .resource-item').forEach(item => {
                 const name = item.querySelector('[data-create-name]').value;
                 const url = item.querySelector('[data-create-url]').value;
-                if (name && url) resources.push({ name, url, icon: item.querySelector('[data-create-icon]').value, isWebex: item.querySelector('[data-create-webex]').checked });
+                if (name && url) resources.push({ name, url, icon: item.querySelector('select').value, isWebex: item.querySelector('input[type="checkbox"]').checked });
             });
             try {
                 await window.firestore.addDoc(window.firestore.collection(db, 'courses'), {
@@ -1262,6 +1276,14 @@
             });
         }
         
+        function filterTasks() {
+            const filter = document.getElementById('taskGradeFilter').value;
+            document.querySelectorAll('.task-card').forEach(card => {
+                const grade = card.getAttribute('data-grade');
+                card.style.display = (filter === 'all' || grade === filter) ? 'block' : 'none';
+            });
+        }
+
         function switchTab(tabName) { document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); document.getElementById(tabName + 'Tab').style.display = 'block'; }
         function openModal(modalId) { document.getElementById(modalId).classList.add('active'); if (modalId === 'createTaskModal' && !quill) quill = new Quill('#editor-container', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered'}, { 'list': 'bullet'}], ['clean']] } }); }
         function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
