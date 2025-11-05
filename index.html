@@ -1000,11 +1000,12 @@
         });
 
         window.initDefaultCourses = async () => {
-            const coursesRef = collection(db, 'courses');
-            const coursesSnap = await getDocs(coursesRef);
-            if (!coursesSnap.empty) return;
+            try {
+                const coursesSnap = await getDocs(collection(db, 'courses'));
+                if (!coursesSnap.empty) return;
+            } catch(e) { /* ignore */ }
             const courses = [{name: "📚 Normas APA - 10° Grado", category: "academic", color: "grade-10", duration: 6, description: "Aprende a citar y referenciar.", resources: [{ name: "Cisco Webex", url: "https://meet1504.webex.com/meet/pr25560910933", icon: "📹", isWebex: true }, { name: "Guía APA", url: "https://docs.google.com/document/d/1bIPT5oTQfnGEQzbsHFNaCKu-BrZLznY_wN5V0n8KS54/edit", icon: "📄" }, { name: "Plantillas", url: "https://drive.google.com/drive/folders/19bCfYFVeCxx_iOD92A54WrWnC-5PCqx1", icon: "📝" }]}];
-            for (const course of courses) { await addDoc(coursesRef, course); }
+            for (const course of courses) { await addDoc(collection(db, 'courses'), course); }
         };
 
         function startRealTimeUpdates() {
